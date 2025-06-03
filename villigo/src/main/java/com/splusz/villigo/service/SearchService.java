@@ -38,7 +38,7 @@ public class SearchService {
         List<ProductImageMergeDto> ImageMergeProducts = new ArrayList<>();
         List<String> locations = filters.remove("location");
         List<String> page = filters.remove("page");
-        Integer pageNum = (page.getFirst() == null)? 0 : Integer.parseInt(page.getFirst());
+        Integer pageNum = (page.isEmpty() || page.get(0) == null) ? 0 : Integer.parseInt(page.get(0));
         log.info("pageNum={}", pageNum);
 
         List<Product> products = prodRepo.searchedProduct(filters);
