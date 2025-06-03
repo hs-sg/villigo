@@ -1,0 +1,122 @@
+/* 마이페이지 팝업 기본 스타일 */
+body{
+    font-family: 'Spoqa Han Sans Neo', sans-serif;
+    font-weight: 400;
+}
+.mypage-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%; /* 가운데 기준 */
+    transform: translateX(-50%); /* 정중앙 정렬 */ 
+    background: white;
+    border: 1px solid #ddd;
+    padding: 12px 0;
+    border-radius: 10px;
+    
+    z-index: 999;
+    min-width: 150px;
+    text-align: left;
+}
+.mypage-popup.show {
+    display: block;
+}
+
+.mypage-popup .pop-nav-link {
+     display: flex;
+    padding: 6px 12px;
+     align-items: center;
+    text-decoration: none;
+    font-size: 16px;
+    color: #000000!important;
+    white-space: nowrap;
+    text-align: center;
+    gap: 6px;
+}
+.pop-nav-link .emoji {
+  font-size: 1.2rem; /* 필요시 더 키워도 됨 */
+  margin-right: 2px;
+  
+  flex-shrink: 0;
+}
+
+
+.mypage-popup.show {
+    display: block;
+}
+
+/* 팝업 내부 스타일 */
+.popup-body {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.popup-body a {
+  padding: 10px;
+  text-decoration: none;
+  color: black;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #ddd;
+  display: block;
+}
+
+.popup-body a:last-child {
+  border-bottom: none;
+}
+
+/* 알림 개수 배지 */
+.badge {
+  position: absolute;
+  top: 3px;
+  right: -5px;
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+#blck{
+    color: black !important;
+    }
+.navbar-nav{
+    color: black !important;
+    }
+/* 알림 팝업 */
+.alarm-popup {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 270px;
+  z-index: 9999;
+  padding: 10px 0;
+}
+
+/* 알림 항목 */
+.alarm-item {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.alarm-item:hover {
+  background-color: #f7f7f7;
+}
+
+/* 빨간 알림 점 */
+.alarm-dot {
+  position: absolute;
+  
+  width: 7px;
+  height: 7px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+}
+    

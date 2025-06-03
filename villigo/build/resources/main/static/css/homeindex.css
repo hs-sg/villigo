@@ -1,0 +1,300 @@
+/* 카테고리 버튼 */
+.category-toggle button {
+  border: none;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 6px 14px;
+  border: 1px solid black;
+  margin-right: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 브랜드 스크롤 */
+.brand-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto 17px auto;
+   padding: 0 40px;
+}
+
+/* 화살표 공통 */
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+}
+
+/* 좌우 위치 지정 */
+.scroll-arrow.left {
+  left: 0; /* 더 이상 음수 X */
+}
+
+.scroll-arrow.right {
+  right: 0;
+}
+
+.scroll-arrow svg {
+  width: 30px;
+  height: 30px;
+  fill: #000;
+  pointer-events: none;
+}
+
+/* 브랜드 컨테이너 */
+.brand-emblems-container {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+/* 브랜드 리스트 */
+.brand-emblems {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+/* 브랜드 항목 */
+.brand-item {
+  flex: 0 0 calc(12.5% - 20px); /* 8개를 균등하게 (100% / 8 - gap) */
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.brand-item:focus {
+  outline: none;
+}
+
+/* 브랜드 이미지 */
+.brand-item img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 6px;
+}
+
+
+
+/*  프로모션 슬라이드 구조 */
+.promotion-section {
+  overflow: hidden;
+  border-radius: 16px;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9; /*  비율로 변경 */
+    max-height: 350px;
+}
+
+.promotion-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* 카드 한 장씩 절대 위치 배치 */
+.promotion-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* ✅ 고정 height 제거 */
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 1;
+  background: #000;
+}
+
+/* 슬라이드 애니메이션용 */
+.slide-in {
+  transform: translateX(100%);
+  animation: slideLeft 0.5s ease-in-out forwards;
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+/* 이미지 + 텍스트 */
+.promotion-bg img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ✅ 이미지 왜곡 방지 */
+  object-position: center; /* 필요 시 개별 슬라이드에서 position 덮어씀 */
+}
+
+.promotion-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30px;
+  font-size: 25px;
+  color: #1f1e1e;
+  background: none;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  z-index: 2;
+}
+
+.promotion-text.light-text {
+  color: white;
+}
+
+.promotion-text.dark-text {
+  color: #1f1e1e;
+  text-shadow: none;
+}
+
+.slider-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 300px;
+  margin: 10px auto;
+}
+
+
+.control-icon {
+  all: unset;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.control-icon svg {
+  pointer-events: none;
+}
+
+
+.control-divider {
+  width: 1px;
+  height: 16px;
+  background-color: #ccc;
+}
+
+.progress-bar {
+  position: relative;
+  flex: 1;
+  height: 4px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #222;
+  width: 0%;
+  transition: left 0.3s ease, width 0.3s ease;
+}
+.promotion-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.action-quick-links {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 25px;
+  margin-bottom: 60px;
+  
+}
+
+.quick-link-card {
+  background: #f8f9fc;
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-weight: 500;
+  color: #222222;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  font-size: 18px;
+  height: 60px;
+  flex: 1;    
+   white-space: nowrap;
+   display: flex;               
+  align-items: center;         
+  justify-content: center;      
+    }
+
+
+.quick-link-card:hover {
+  background: #eef1f7;
+}
+
+/* 상품 섹션 */
+.product-section {
+  margin-top: 30px;
+  margin-bottom:100px;
+  
+}
+.product-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 28px;
+  border-bottom:2px solid #000000;
+  padding:0 0 17px 0 ;
+}
+
+.product-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 18px;
+  padding-bottom: 10px;
+  
+}
+.product-card {
+  flex: 0 0 auto;
+  
+}
+.product-name {
+  font-size: 17px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  
+}
+
+.product-price {
+  font-size: 15px;
+  font-weight: 700;
+  
+  
+}
+.product-card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+}

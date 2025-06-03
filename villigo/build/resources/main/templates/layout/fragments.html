@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www,thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:fragment="htmlHead(title, cssPath)">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title th:text="${title}"></title>
+    
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+              rel="stylesheet">
+        <!-- 각 페이지에서 추가할 CSS (있으면 로드) -->
+        <link rel="stylesheet" th:if="${cssPath != null}" th:href="@{${cssPath}}">
+    </head>
+        <body>
+            <th:block th:fragment="pageHeader">
+        <header>
+            <nav class="navbar navbar-expand-sm bg-body-tertiary w-100 header-top">
+                <div class="container-fluid container-head">
+                    <a class="navbar-brand" th:href="@{/}">
+                    <img th:src="@{/images/logo5.png}" alt="빌리고로고" width="150">
+                    </a>
+                    
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTopNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <form th:action="@{/search}" method="get" class="search-box">
+                    <label for="search-input" style="cursor: pointer; width: 100%;">
+                        <input type="text" id="search-input" name="search" placeholder="슈퍼카를 단돈 만원에?!" readonly onclick="this.form.submit()">
+                    </label>
+                    <button type="submit" class="search-icon"></button>
+                </form>
+
+                <!-- ✅ 네비게이션 메뉴 (기본 및 모바일) -->
+                <div class="collapse navbar-collapse justify-content-end" id="navbarTopNav">
+                    <ul class="navbar-nav">
+					    <!-- 공통 메뉴 -->
+					    <li class="nav-item"><a class="nav-link" th:href="@{/chat}">CHAT</a></li>
+					    <li class="nav-item"><a class="nav-link" th:href="@{/jjam/shop}">JJAM</a></li>
+					
+					    <!-- 로그인 상태별 분기 -->
+					    <th:block sec:authorize="isAnonymous()">
+					        <li class="nav-item"><a class="nav-link" th:href="@{/member/signin}">LOGIN</a></li>
+					        <li class="nav-item"><a class="nav-link" th:href="@{/member/signup}">JOIN</a></li>
+					    </th:block>
+					
+					    <th:block sec:authorize="isAuthenticated()">
+					        <li class="nav-item position-relative mypage-container">
+						    <button class="nav-link btn btn-link mypage-btn">MY</button>
+						    <div class="mypage-popup">
+						      <a class="nav-link pop-nav-link" th:href="@{/mypage}">
+						        <span class="emoji">🥰</span> 마이페이지
+						      </a>
+						      <a class="nav-link pop-nav-link" th:href="@{/member/modify}">
+						        <span class="emoji">🛠️</span> 정보 수정
+						      </a>
+						      <a class="nav-link pop-nav-link" th:href="@{/logout}">
+						        <span class="emoji">🔓</span> 로그아웃
+						      </a>
+						    </div>
+						  </li>
+					    </th:block>
+					
+					    <!-- 항상 오른쪽에 고정될 알람 메뉴 -->
+					  <li class="nav-item position-relative alarm-container">
+  						<a class="nav-link alarm-btn" href="javascript:void(0)">
+						    <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 48 48" fill="currentColor">
+						      <path d="M 23.277344 4.0175781 C 15.193866 4.3983176 9 11.343391 9 19.380859 L 9 26.648438 L 6.3496094 31.980469 A 1.50015 1.50015 0 0 0 6.3359375 32.009766 C 5.2696804 34.277268 6.9957076 37 9.5019531 37 L 18 37 C 18 40.295865 20.704135 43 24 43 C 27.295865 43 30 40.295865 30 37 L 38.496094 37 C 41.002339 37 42.730582 34.277829 41.664062 32.009766 A 1.50015 1.50015 0 0 0 41.650391 31.980469 L 39 26.648438 L 39 19 C 39 10.493798 31.863289 3.6133643 23.277344 4.0175781 z M 23.417969 7.0136719 C 30.338024 6.6878857 36 12.162202 36 19 L 36 27 A 1.50015 1.50015 0 0 0 36.15625 27.667969 L 38.949219 33.289062 C 39.128826 33.674017 38.921017 34 38.496094 34 L 9.5019531 34 C 9.077027 34 8.8709034 33.674574 9.0507812 33.289062 C 9.0507812 33.289062 9.0507812 33.287109 9.0507812 33.287109 L 11.84375 27.667969 A 1.50015 1.50015 0 0 0 12 27 L 12 19.380859 C 12 12.880328 16.979446 7.3169324 23.417969 7.0136719 z M 21 37 L 27 37 C 27 38.674135 25.674135 40 24 40 C 22.325865 40 21 38.674135 21 37 z"></path>
+						    </svg>
+						     <span class="alarm-dot" id="alarmDot"></span> <!-- 🔴 알림 점 -->
+						  </a>
+						   <!-- 알림 팝업 -->
+						  <div class="alarm-popup">
+						    <div class="alarm-item">📦 새로운 예약신청이 도착했습니다.</div>
+						    <div class="alarm-item">💬 새로운 채팅이 도착했습니다.</div>
+						    <div class="alarm-item">✅ 예약이 확정되었습니다.</div>
+						  </div>
+						</li>
+						
+					</ul>
+                    </div>
+                </div>
+            </nav>
+            
+	        <nav class="navbar navbar-expand-sm bg-body-tertiary header-bottom">
+	            <div class="container-fluid container-head">
+	                <a class="navbar-brand" th:href="@{/}">
+	                <img th:src="@{/images/logo6.png}" alt="빌리고로고" width="150"></a>
+	                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+	                    <span class="navbar-toggler-icon"></span>
+	                </button>
+	                <form th:action="@{/search}" method="get" class="search-box">
+                        <label for="search-input" style="cursor: pointer; width: 100%;">
+                            <input type="text" id="search-input" name="search" placeholder="슈퍼카를 단돈 만원에?!" readonly onclick="this.form.submit()">
+                        </label>
+                        <button type="submit" class="search-icon"></button>
+                    </form>
+	
+	                
+	                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+	                    <ul class="navbar-nav">
+					    <!-- 공통 메뉴 -->
+					    <li class="nav-item"><a class="nav-link" th:href="@{/chat}">CHAT</a></li>
+					    <li class="nav-item"><a class="nav-link" th:href="@{/jjam/shop}">JJAM</a></li>
+					
+					    <!-- 로그인 상태별 분기 -->
+					    <th:block sec:authorize="isAnonymous()">
+					        <li class="nav-item"><a class="nav-link" th:href="@{/member/signin}">LOGIN</a></li>
+					        <li class="nav-item"><a class="nav-link" th:href="@{/member/signup}">JOIN</a></li>
+					    </th:block>
+					
+					    <th:block sec:authorize="isAuthenticated()">
+						  <li class="nav-item position-relative mypage-container">
+						    <button class="nav-link btn btn-link mypage-btn">MY</button>
+						    <div class="mypage-popup">
+						      <a class="nav-link pop-nav-link" th:href="@{/mypage}">
+						        <span class="emoji">🥰</span> 마이페이지
+						      </a>
+						      <a class="nav-link pop-nav-link" th:href="@{/member/modify}">
+						        <span class="emoji">🛠️</span> 정보 수정
+						      </a>
+						      <a class="nav-link pop-nav-link" th:href="@{/logout}">
+						        <span class="emoji">🔓</span> 로그아웃
+						      </a>
+						    </div>
+						  </li>
+						</th:block>
+
+					
+					    <!-- 항상 오른쪽에 고정될 알람 메뉴 -->
+					  <li class="nav-item position-relative alarm-container">
+  						<a class="nav-link alarm-btn" href="javascript:void(0)">
+						    <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 48 48" fill="currentColor">
+						      <path d="M 23.277344 4.0175781 C 15.193866 4.3983176 9 11.343391 9 19.380859 L 9 26.648438 L 6.3496094 31.980469 A 1.50015 1.50015 0 0 0 6.3359375 32.009766 C 5.2696804 34.277268 6.9957076 37 9.5019531 37 L 18 37 C 18 40.295865 20.704135 43 24 43 C 27.295865 43 30 40.295865 30 37 L 38.496094 37 C 41.002339 37 42.730582 34.277829 41.664062 32.009766 A 1.50015 1.50015 0 0 0 41.650391 31.980469 L 39 26.648438 L 39 19 C 39 10.493798 31.863289 3.6133643 23.277344 4.0175781 z M 23.417969 7.0136719 C 30.338024 6.6878857 36 12.162202 36 19 L 36 27 A 1.50015 1.50015 0 0 0 36.15625 27.667969 L 38.949219 33.289062 C 39.128826 33.674017 38.921017 34 38.496094 34 L 9.5019531 34 C 9.077027 34 8.8709034 33.674574 9.0507812 33.289062 C 9.0507812 33.289062 9.0507812 33.287109 9.0507812 33.287109 L 11.84375 27.667969 A 1.50015 1.50015 0 0 0 12 27 L 12 19.380859 C 12 12.880328 16.979446 7.3169324 23.417969 7.0136719 z M 21 37 L 27 37 C 27 38.674135 25.674135 40 24 40 C 22.325865 40 21 38.674135 21 37 z"></path>
+						    </svg>
+						     <span class="alarm-dot" id="alarmDot"></span> <!-- 🔴 알림 점 -->
+						  </a>
+						   <!-- 알림 팝업 -->
+						  <div class="alarm-popup">
+						    <div class="alarm-item">📦 새로운 예약신청이 도착했습니다.</div>
+						    <div class="alarm-item">💬 새로운 채팅이 도착했습니다.</div>
+						    <div class="alarm-item">✅ 예약이 확정되었습니다.</div>
+						  </div>
+						</li>
+					</ul>
+                </div>
+	            </div>
+	        </nav>
+    	</header>
+	</th:block>
+        
+        <th:block th:fragment="pagination">
+         <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+               <li class="page-item"
+                  th:classappend="${!page.hasPrevious} ? 'disabled'">
+                  <!-- 이전 페이지가 없을 때 'disabled' 클래스 속성을 추가 -->
+                  
+                  <a class="page-link" th:href="@{${baseUrl}(p=${page.number - 1}, category=${param.category}, keyword=${param.keyword})}">이전</a>
+                  <!-- (현재 페이지 번호) -1 페이지로 이동-->
+                  
+               </li>
+               <li class="page-item" 
+                  th:each="pageNo : ${#numbers.sequence(0, page.totalPages - 1, 1)}"
+                  th:if="${pageNo >= page.number - 3 && pageNo < page.number + 3}"
+                  th:classappend="${pageNo == page.number} ? 'active'">
+                  <!-- PageNo 값이 현재 페이지 번호와 같으면 'active 클래스 속성 추가 -->
+                      <a class="page-link"
+                          th:href="@{${baseUrl}(p=${page.number + 1}, category=${param.category}, keyword=${param.keyword})}"
+                          th:text="${pageNo +1 }"></a>
+                  </li>
+               <li class="page-item"
+                  th:classappend="${!page.hasNext} ? 'disabled'">
+                  <!--  다음 페이지가 없을 때 'disabled' 클랙스 속성을 추가 -->
+                  
+                  <a class="page-link" th:href="@{${baseUrl}(p=${page.number + 1}, category=${param.category}, keyword=${param.keyword})}">다음</a>
+                  <!-- (현재 페이지 번호) +1 페이지로 이동-->
+                  </li>
+            </ul>
+         </nav>
+      </th:block>
+      
+      <footer th:fragment="pageFooter">
+          <!-- 알람 토스트용 섹션 -->
+          <section id="toaster"></section>
+			
+			<!-- 플로팅 + 버튼 -->
+		<div class="floating-plus-button" id="plusToggleButton">
+		  <svg xmlns="http://www.w3.org/2000/svg" id="plusIcon" width="32" height="32" fill="white" viewBox="0 0 24 24">
+		    <path d="M12 5v14m-7-7h14" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+		  </svg>
+		  <svg xmlns="http://www.w3.org/2000/svg" id="closeIcon" width="32" height="32" fill="white" viewBox="0 0 24 24" style="display: none">
+		    <path d="M6 6l12 12M6 18L18 6" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+		  </svg>
+		</div>
+		
+		<!-- 플로팅 팝업 메뉴 -->
+		<div class="floating-popup" id="plusPopup">
+		  <a href="/post/category" class="floating-item">
+		    <span class="float-emoji">🚀</span> 상품올리기
+		  </a>
+		  <a href="/search" class="floating-item">
+		    <span class="float-emoji">🔍</span> 검색
+		  </a>
+		</div>
+
+          <!-- AI 챗봇 버튼 -->
+		 
+    <div class="ai-chatbot-button" onclick="toggleChatbot()">
+    	<svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+		  <!-- ✅ 로봇 본체 (크기 확대) -->
+		  <rect x="9" y="15" width="32" height="22" rx="7" stroke="white" stroke-width="3"/>
+		  
+		  <!-- ✅ 눈 (크기 확대) -->
+		  <circle cx="17" cy="24" r="3" fill="white"/>
+		  <circle cx="33" cy="24" r="3" fill="white"/>
+		  
+		  <!-- ✅ 입 (크기 확대) -->
+		  <line x1="17" y1="31" x2="33" y2="31" stroke="white" stroke-width="2" stroke-linecap="round"/>
+		  
+		  <!-- ✅ 안테나 (크기 조정) -->
+		  <line x1="25" y1="6" x2="25" y2="15" stroke="white" stroke-width="3" stroke-linecap="round"/>
+		</svg>
+	</div>
+			
+
+		  
+		  <!-- AI 챗봇 창 -->
+		  <div id="chatbotWindow" class="chatbot-container">
+		    <div class="chatbot-header">
+		      <span id="authenticatedUser" sec:authentication="name">Guest</span>님 안녕하세요!
+		      <button onclick="toggleChatbot()">X</button>
+		    </div>
+	        <div class="chatbot-messages" id="chatbotMessages">
+	            <p>🤖 인공지능 빌리챗입니다. <br> 무엇을 도와드릴까요?</p>
+	        </div>
+	         
+		        <!-- FAQ 버튼들: 항상 보이는 고정 영역 -->
+			<div class="chatbot-faq-buttons" id="faqButtons"></div>
+	        <!-- ✅ 메시지 입력창 -->
+	        <div class="chatbot-input-container">
+			  <input type="text" id="chatbotInput" class="chatbot-input" placeholder="메시지를 입력하세요...">
+			  <button class="chatbot-send-btn" onclick="sendChatbotMessage()">전송</button>
+			</div>
+
+		  </div>
+		</footer>
+		
+			<th:block th:fragment="commonLayout">
+			    <th:block th:replace="~{/layout/fragments :: pageHeader}"></th:block>
+			    <th:block th:replace="~{/layout/fragments :: pageFooter}"></th:block>
+			</th:block>
+			
+		
+       <th:block th:fragment="bootstrapJS">
+	    	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+	        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+	        crossorigin="anonymous"></script>
+            <!-- 알람 테스트용 sockJS, stomp, 알람 JS -->
+            <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.1.0/bundles/stomp.umd.min.js"></script>
+            <script th:src="@{/js/alarm.js}"></script>            
+            <script th:src="@{/js/mypagepop.js}"></script>
+	        <script th:src="@{/js/chatbot.js}"></script>
+	        <link rel="stylesheet" th:href="@{/css/global.css}">
+	        <link rel="stylesheet" th:href="@{/css/mypage-pop.css}">
+		</th:block>		
+    </body>
+</html>

@@ -1,0 +1,167 @@
+/* 컨테이너 */
+.signup-form-container {
+  max-width: 960px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  border: 1px solid #000000;
+}
+
+/* 프로필 이미지 */
+.profile-image-wrapper {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profile-image-wrapper img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.profile-image-wrapper input[type="file"] {
+  display: block;
+  margin: 0 auto;
+   display: none;
+}
+.edit-icon {
+  display: block;
+  color: #000000;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  font-weight:bold;
+}
+/* 2단 컬럼 */
+.two-column-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.column {
+  flex: 1;
+  min-width: 300px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom:10px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.input-group input[type="text"],
+.input-group input[type="tel"],
+.input-group input[type="password"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px !important;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #543fe4;
+  box-shadow: 0 0 4px rgba(84, 63, 228, 0.3);
+}
+
+.password-wrapper {
+    position: relative;
+    margin-top: 8px !important;
+}
+
+.password-wrapper input {
+  width: 100% !important;
+  padding-right: 40px !important;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#region-select{
+  position: relative;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  border-radius: 6px !important;
+  background-color: #fff;
+  cursor: pointer;
+  user-select: none;
+    width: 100%;
+    margin-top: 7px; 
+}
+#interest-select{
+    position: relative;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  border-radius: 6px !important;
+  background-color: #fff;
+  cursor: pointer;
+  user-select: none;
+    width: 100%;
+    margin-top: 2.5px; 
+}
+
+.select-box .arrow {
+  float: right;
+  color: #543fe4;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px !important;
+  margin-top: 5px;
+  max-height: 160px;
+  overflow-y: auto;
+  z-index: 9999;
+  left: 0; /* 기본값이 왼쪽부터 열림 */
+  width: 100%;
+}
+
+.option {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.option:hover {
+  background-color: #f3f3f3;
+}
+
+.btn-save {
+  margin-top: 40px;
+  width: 100%;
+  padding: 14px;
+  background-color: #6b59e8;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-save:hover {
+  background-color: #543fe4;
+}

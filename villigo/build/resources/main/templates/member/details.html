@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/layout/fragments :: htmlHead('빌리고｜유저페이지','/css/memberdetails.css')}">
+</head>
+<body>
+  <!-- 공통 헤더 & 푸터 포함 -->
+  <th:block th:replace="~{/layout/fragments :: commonLayout}"></th:block>
+
+  <main class="container-global">
+    <!-- 프로필 영역 -->
+    <div class="profile-container">
+      <div class="profile-left">
+        <div class="profile-img">
+          <img th:src="@{/images/testuser.jfif}" alt="프로필 이미지">
+        </div>
+        <div class="profile-info">
+          <div class="nickname">피카츄</div>
+          <div class="store-meta">
+            <div class="meta-item">
+              <div class="meta-unit">
+                <span class="emoji">📍</span>
+                <span>서울 강남구</span>
+              </div>
+              <div class="meta-unit">
+                <span class="emoji">🏷️</span>
+                <span>관심 상품 : 자동차</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 탭 메뉴 -->
+    <div class="tabs">
+      <div class="tab active" onclick="showTab(0)">상품</div>
+      <div class="tab" onclick="showTab(1)">후기</div>
+    </div>
+
+    <!-- 콘텐츠 영역 -->
+    <div class="tab-content active">
+      <h3>상품</h3>
+      <div class="product-wrapper">
+        <div class="product-card">
+          <a th:href="@{'/post/details/bag'}">
+            <img th:src="@{/images/testbag.jfif}" alt="상품 이미지">
+          </a>
+          <p>
+            <a th:href="@{'/post/details/bag'}"><strong>가방이름</strong></a>
+          </p>
+          <p><strong>20,000 JJAM</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content">
+      <h3>상점 후기</h3>
+      <div class="review-item">
+        <div class="review-user-info">
+          <div class="review-user-img">
+            <img src="/images/testuser2.jpg" alt="사용자 프로필">
+          </div>
+          <div class="review-user-meta">
+            <a href="/user/detail" class="review-user-name">피리</a>
+            <div class="review-score">⭐️⭐️⭐️⭐️⭐️ (5점)</div>
+          </div>
+        </div>
+        <div class="review-content">
+          "정말 친절하고 빠른 거래 감사합니다!"
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 공통 JS -->
+  <th:block th:replace="~{/layout/fragments :: bootstrapJS}"></th:block>
+  <script th:src="@{/js/member-details.js}"></script>
+</body>
+</html>

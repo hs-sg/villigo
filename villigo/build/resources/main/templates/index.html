@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{/layout/fragments :: htmlHead('VilliGo','/css/homeindex.css')}">
+</head>
+<body>
+    <th:block th:replace="~{/layout/fragments :: commonLayout}"></th:block>
+        <main class="container-global">    
+            <div class="container ">
+    
+              <!--  카테고리 선택 -->
+              <div class="category-toggle mb-3">
+                <button onclick="selectCategory('car')">자동차</button>
+                <button onclick="selectCategory('bag')">가방/백</button>
+              </div>
+            
+             <!--  브랜드 앰블럼 영역 -->
+          <div class="brand-wrapper">
+			  <div class="scroll-arrow left" onclick="scrollBrand(-1, event)">
+			    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+			      <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+			    </svg>
+			  </div>
+			
+			  <div class="brand-emblems-container">
+			    <div id="brandEmblems" class="brand-emblems"></div>
+			  </div>
+			
+			  <div class="scroll-arrow right" onclick="scrollBrand(1, event)">
+			    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+			      <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+			    </svg>
+			  </div>
+			</div>
+              
+            
+              <!--  프로모션 배너 영역 -->
+              <div class="promotion-section">
+				  <div class="promotion-carousel" id="carousel">
+				    <!-- JS가 여기 안에 카드 1장씩만 넣어줌 -->
+				  </div>
+				</div>
+				<div class="slider-control">
+				  <button id="sliderToggleBtn" class="control-icon" aria-label="정지버튼">
+				  <!-- 기본은 일시정지 아이콘 -->
+				  <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#000" viewBox="0 0 24 24">
+				    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+				  </svg>
+				  <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#000" viewBox="0 0 24 24" style="display: none;">
+				    <path d="M8 5v14l11-7z"/>
+				  </svg>
+				</button>
+				  <div class="control-divider"></div>
+				  <div class="progress-bar">
+				    <div class="progress-indicator" id="progressIndicator"></div>
+				  </div>
+				</div>
+				</div>
+				
+				<!-- 미니 링크 배너 -->
+				<div class="action-quick-links">
+				  <a th:href="@{/jjam/shop}" class="quick-link-card">💎쨈충전하기</a>
+				  <a th:href="@{/post/category}" class="quick-link-card">🚀상품올리기</a>
+				  <a th:href="@{/search}" class="quick-link-card">🔍검색하기</a>
+				</div>
+
+              
+            
+              <!--  상품 영역 -->
+              <div class="product-section">
+                <div class="product-title">최근 등록 상품</div>
+                <div id="newProducts" class="product-scroll">
+                  <!-- JS로 채워짐 -->
+                </div>
+                </div>
+                
+              <div class="product-section">
+                <div class="product-title">이런 상품은 어떠세요?</div>
+                <div id="recommendProducts" class="product-scroll">
+                  <!-- JS로 채워짐 -->
+                </div>
+              </div>
+            
+              <div class="product-section">
+                <div class="product-title">관심 지역의 많이 찾는 상품</div>
+                <div id="topLocalProducts" class="product-scroll">
+                  <!-- JS로 채워짐 -->
+                </div>
+              </div>
+              
+              <div class="product-section">
+                <div class="product-title">전체 상품</div>
+                <div id="AllProducts" class="product-scroll">
+                  <!-- JS로 채워짐 -->
+                </div>
+              </div>
+            
+        </main>
+        <th:block th:replace="~{/layout/fragments :: bootstrapJS}"></th:block>
+        <script th:src="@{/js/home-index.js}"></script>
+    </body>
+</html>
