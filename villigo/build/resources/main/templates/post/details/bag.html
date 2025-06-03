@@ -14,11 +14,9 @@
         
             <button class="prev-btn" onclick="changeSlide(-1)">&#10094;</button>
             <div class="image-container">
-                <div class="image-zone" style="width: 550px; height: 550px; align-items: center; display: flex;">
-                    <th:block th:each="image : ${rentalImages}" >
-                        <img th:src="@{'/images/rentals/' + ${image.filePath}}" alt="상품이미지" class="slide-image">
-                    </th:block>
-                </div>
+                <th:block th:each="image : ${rentalImages}" >
+                    <img th:src="${image.filePath}" alt="상품이미지" class="slide-image">
+                </th:block>
             </div>
             <button class="next-btn" onclick="changeSlide(1)">&#10095;</button>
             <div class="dots">
@@ -29,32 +27,60 @@
                     </th:block>
                 </th:block>
             </div>
-
                 <div class="user-info-container">
                     <div class="user-info">
                         <div class="user-details">
                             <p class="username">
-                                <a th:href="@{/user/details}"> <!-- 유저페이지가 없어서 수정필요 -->
-                                    <strong th:text="${user.nickname}">닉네임</strong></a></p>
+                                <a th:href="@{/member/details(userId=${user.id})}">
+                                    <strong th:text="${user.nickname}">닉네임</strong>
+                                </a>
+                            </p>
                             <p class="user-location" th:text="${user.region}">활동지역</p>
                         </div>
-                        <a th:href="@{/user/details}"> <!-- 유저페이지가 없어서 수정필요 -->
-                            <img th:src="@{/images/testuser.jfif}" alt="유저 프로필" class="user-avatar">
-                        </a>
+						<a th:href="@{/member/details(userId=${user.id})}">
+						    <th:block th:if="${user.avatar != null}">
+						        <img id="profileImage"
+						             th:src="${user.avatar}"
+						             alt="프로필 이미지" />
+						    </th:block>
+						    <th:block th:unless="${user.avatar != null}">
+						        <span id="profileImage" class="emoji-frog">🐸</span>
+						    </th:block>
+						</a>
                     </div>
                 </div>
+                </div>
+
+            <!-- 이미지 모달 -->
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content bg-transparent border-0">
+                  <div class="modal-body position-relative p-0">
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div id="modalCarousel" class="carousel slide" data-bs-ride="carousel">
+                      <div class="carousel-inner" id="modalCarouselInner"></div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- 가방 정보 -->
-            <!-- 가방 정보 -->
             <div class="section">
-                <h2 class="product-title" th:text="${product.productName}">가방이름</h2>
+                <h2 class="product-title" th:text="${product.postName}">글제목</h2>
                 <p><strong>브랜드:</strong><th:block th:text="${product.brand.name}">브랜드</th:block></p>
+                <p><strong>제품명:</strong><th:block th:text="${product.productName}">제품명</th:block></p>
                 <div class="color-display">
                     <p><strong>색상:</strong> </p>
                     <span class="color-circle selected" th:style="'background-color: ' + ${product.color.colorNumber} + ';'"></span>
                 </div>
-                <p class="description" th:text="${product.detail}">가방 설명란</p>
+                <p class="description" th:text="${product.detail}" style="white-space: pre-wrap;">가방 설명란</p>
             </div>
 
             <!-- ✅ 요금 & 거래 희망 장소 -->
@@ -99,7 +125,7 @@
     </main>
 
     <!-- 다음 지도 -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=46b5efd1c8351c2b80a3ee8916942201"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=93ca72e78b0c65657f0cb8f3771d397a"></script>
     <!-- 공통 JS -->
     <th:block th:replace="~{/layout/fragments :: bootstrapJS}"></th:block>
     <script th:src="@{/js/post-details.js}"></script>

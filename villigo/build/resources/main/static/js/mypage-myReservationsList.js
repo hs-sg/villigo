@@ -19,7 +19,7 @@ function makeMyReservationElements({ content }) {
             }
 
             // Rental Images 경로 생성
-            const imagePath = `/images/rentalImages/${dto.imagePath}`;
+            const imagePath = `${dto.imagePath}`;
 
             // 경로와 주소만 포함된 HTML
             htmlStr += `

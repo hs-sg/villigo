@@ -1,15 +1,12 @@
 @font-face {
   font-family: 'Spoqa Han Sans Neo';
-  font-style: normal;
+  src: url('/fonts/SpoqaHanSansNeo-Regular.woff2') format('woff2');
   font-weight: 400;
-  src: url('https://cdn.jsdelivr.net/gh/spoqa/spoqa-han-sans@2.1.2/css/SpoqaHanSansNeo-Regular.woff2') format('woff2');
 }
-
 @font-face {
   font-family: 'Spoqa Han Sans Neo';
-  font-style: normal;
+  src: url('/fonts/SpoqaHanSansNeo-Bold.woff2') format('woff2');
   font-weight: 700;
-  src: url('https://cdn.jsdelivr.net/gh/spoqa/spoqa-han-sans@2.1.2/css/SpoqaHanSansNeo-Bold.woff2') format('woff2');
 }
 .container-head{
      max-width: 1280px;
@@ -24,6 +21,7 @@
     margin: 0 auto;
     padding: 130px 18px;
     font-family: 'Spoqa Han Sans Neo', sans-serif;
+    font-weight: 400;
   
 }
 
@@ -76,7 +74,7 @@
 }
 
 /* ✅ 돋보기 아이콘 스타일 */
-.search-box .search-icon {
+.search-box .headsearch-icon {
     position: absolute;
     right: 15px;
     width: 18px;
@@ -119,7 +117,7 @@
 }
 
 
-.search-box .search-icon::after {
+.search-box .headsearch-icon::after {
     content: "";
     position: absolute;
     width: 8px;
@@ -453,6 +451,19 @@
 }
 .floating-item:last-child {
   border-bottom: none;
+}
+
+/* 상품 상세 페이지 모달 설정*/
+.modal-backdrop.show {
+  background-color: rgba(0, 0, 0, 0.8); /* 어두운 배경 */
+}
+.carousel-inner img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.modal-content {
+  background: transparent;
 }
 
     

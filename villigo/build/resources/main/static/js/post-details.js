@@ -1,3 +1,33 @@
+// 이미지 상세보기 모달
+document.addEventListener("DOMContentLoaded", function () {
+  const slideImages = document.querySelectorAll(".slide-image");
+  const modalInner = document.getElementById("modalCarouselInner");
+
+  slideImages.forEach((img, index) => {
+    img.style.cursor = "pointer";
+    img.addEventListener("click", () => {
+      modalInner.innerHTML = ""; // 이전 내용 제거
+
+      slideImages.forEach((slide, i) => {
+        const item = document.createElement("div");
+        item.classList.add("carousel-item");
+        if (i === index) item.classList.add("active");
+
+        const imgTag = document.createElement("img");
+        imgTag.src = slide.src;
+        imgTag.className = "d-block w-100";
+        imgTag.alt = `Image ${i + 1}`;
+
+        item.appendChild(imgTag);
+        modalInner.appendChild(item);
+      });
+
+      const modal = new bootstrap.Modal(document.getElementById("imageModal"));
+      modal.show();
+    });
+  });
+});
+
 //슬라이드 & 하트 기능
    
 let slideIndex = 0;
@@ -114,10 +144,11 @@ if(deleteBagBtn) {
             method: 'DELETE'
         }).then(res => {
             if (res.ok) {
+                
                 alert('삭제되었습니다.');
-                location.href = '/'; // 이동 경로 조정
+                location.href = '/mypage'; // 이동 경로 조정
             } else {
-                alert('삭제 실패');
+                alert('신청된 예약을 처리 후 삭제해주세요.');
             }
         });
     });
@@ -134,10 +165,11 @@ if(deleteCarBtn) {
             method: 'DELETE'
         }).then(res => {
             if (res.ok) {
+                console.log(res.ok.valueOf);
                 alert('삭제되었습니다.');
-                location.href = '/'; // 이동 경로 조정
+                location.href = '/mypage'; // 이동 경로 조정
             } else {
-                alert('삭제 실패');
+                alert('신청된 예약을 처리 후 삭제해주세요.');
             }
         });
     });

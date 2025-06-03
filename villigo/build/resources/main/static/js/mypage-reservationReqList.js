@@ -49,6 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
         // DTO의 데이터를 이용하여 예약 현황 카드 생성
         for (const dto of content) {
+            // 예약의 status가 5(삭제처리됨)이면 예약카드를 생성하지 않음
+            if (dto.status === 5) {
+                continue; 
+            }
+            
             console.log('상품 카테고리 id: ', dto.rentalCategoryId);
             // 상품 디테일 페이지 링크 URL 생성
             let postDetailsUrl = '/post/details';
@@ -65,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="reservation-card">
                   <div class="res-img">
                     <a href="${postDetailsUrl}">
-                    <img src="/images/rentals/${dto.imagePath}" alt="상품 이미지">
+                    <img src="${dto.imagePath}" alt="상품 이미지">
                     </a>
                   </div>
                   <div class="res-info">
@@ -75,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong>대여 날짜:</strong> ${dto.rentalDate}</p>
                     <p><strong>대여 시간:</strong> ${dto.rentalTimeRange}</p>
                     <p><strong>요금:</strong> ${dto.fee} JJAM</p>
-                    <p><strong>예약자:</strong> ${dto.renterNickname} JJAM</p>
+                    <p><strong>예약자:</strong> ${dto.renterNickname}</p>
             `; // <주의> 밑에 버튼 추가 필수!! 
             // 예약 진행 상태(status)에 따라 버튼 추가
             switch (dto.status) {
@@ -85,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="res-buttons">
                           <button class="btn-decline" data-id="${dto.reservationId}" data-product-id="${dto.productId}">거절</button>
                           <button class="btn-accept" data-id="${dto.reservationId}" data-product-id="${dto.productId}">수락</button>
-                          <button class="btn-chat">채팅</button>
+                          <button class="btn-chat" data-id="${dto.reservationId}">채팅</button>
                         </div>
                       </div>
                     </div>
@@ -94,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 2:
                     htmlStr += `
                         <div class="res-buttons">
-                          <button class="btn-chat">채팅</button>
+                          <button class="btn-chat" data-id="${dto.reservationId}">채팅</button>
                         </div>
                       </div>
                     </div>
@@ -103,8 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 3:
                     htmlStr += `
                         <div class="res-buttons">
-                          <button class="btn-review" onclick="openReviewPopup()">후기보내기</button>
-                          <button class="btn-complete" disabled>거래완료</button>
+                          <button class="btn-complete" id="sendReviewToRenter" onclick="openCompletePopupForResReq(this)" 
+                              data-id="${dto.reservationId}" data-renter-id="${dto.renterId}">거래완료</button>
+                          <button class="btn-review d-none" disabled>후기 작성 완료</button> 
                         </div>
                       </div>
                     </div>
@@ -115,6 +121,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="res-buttons">
                           <button class="btn-rejected" disabled>거절됨</button>
                           <button class="btn-delete-reserv" data-id="${dto.reservationId}">삭제</button>
+                        </div>
+                      </div>
+                    </div>
+                    `;
+                    break;
+                case 7:
+                    htmlStr += `
+                        <div class="res-buttons">
+                            <button class="btn-review" disabled>후기 작성 완료</button> 
                         </div>
                       </div>
                     </div>
@@ -157,9 +172,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnDeleteReserv = document.querySelectorAll('button.btn-delete-reserv');
         btnDeleteReserv.forEach((btn) => btn.addEventListener('click', deleteReservation));
         
-        const btnChatList = document.querySelectorAll('button.btn-chat');
-        btnChatList.forEach((btn) => btn.addEventListener('click', openChatRoomByReservation));
-    }
+		const btnChatList = document.querySelectorAll('button.btn-chat');
+		btnChatList.forEach((btn) => {
+		    btn.addEventListener('click', function () {
+		        const roomId = this.getAttribute('data-room-id');
+		        const reservationId = this.getAttribute('data-id');
+		        const currentUserId = document.body.getAttribute('data-user-id');
+
+		        if (roomId) {
+		            // 이미 채팅방이 존재하면 바로 이동
+		            window.location.href = `/chat?chatRoomId=${roomId}`;
+		            return;
+		        }
+
+		        if (!reservationId || !currentUserId) {
+		            alert("예약 정보 또는 사용자 정보가 누락되었습니다.");
+		            return;
+		        }
+
+		        // 없으면 서버에 요청하여 채팅방 생성 or 조회
+		        axios.post('/api/chat/rooms/by-reservation', null, {
+		            params: { reservationId, currentUserId }
+		        })
+		        .then(response => {
+		            const chatRoomId = response.data.id;
+		            window.location.href = `/chat?chatRoomId=${chatRoomId}`;
+		        })
+		        .catch(error => {
+		            console.error("채팅방 열기 실패:", error);
+		            alert("채팅방을 열 수 없습니다.");
+		        });
+		    });
+		});
+
+	}
     
     // "채팅" 버튼 클릭 시 호출되는 함수
     function openChatRoomByReservation(event) {

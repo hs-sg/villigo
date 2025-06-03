@@ -78,6 +78,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
+	
+	function addChatRoomIfNotExists(chatRoom) {
+	    if (!chatRoomsCache.some(r => r.id === chatRoom.id)) {
+	        chatRoomsCache.push(chatRoom);
+	    }
+	}
 
     function showModalImage(index) {
         if (index < 0 || index >= imageList.length) return;
@@ -103,6 +109,15 @@ document.addEventListener("DOMContentLoaded", function () {
             showModalImage(currentImageIndex);
         }
     };
+	
+	// 마우스 클릭으로 모달 닫기
+	modal.addEventListener('click', function (e) {
+	    // 모달 이미지 외부를 클릭한 경우에만 닫기
+	    if (e.target === modal) {
+	        modal.style.display = "none";
+	        modalImg.src = "";
+	    }
+	});
 
     document.addEventListener("keydown", function (e) {
         if (e.key === "Escape" && modal.style.display === "block") {
@@ -168,6 +183,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 return otherUserName.includes(searchTerm);
             });
         }
+		
+		// 채팅방이 없을 경우 처리
+		    if (filteredChatRooms.length === 0) {
+		        noChatMessage.style.display = "block";
+		        noChatMessage.innerHTML = "<p>채팅이 없어요!😢 <br> 새로운 예약을 통해 채팅을 시작하세요!🔥</p>";
+		    } else {
+		        noChatMessage.style.display = "none";
+		    }
 
         updateChatList(filteredChatRooms);
     }
@@ -353,6 +376,13 @@ document.addEventListener("DOMContentLoaded", function () {
 	            if (!messagesCache.find(m => m.id === msg.id)) {
 	                messagesCache.push(msg);
 	                displayMessage(msg);
+					const chatRoom = chatRoomsCache.find(room => room.id === parseInt(msg.chatRoomId));
+					                if (chatRoom) {
+					                    chatRoom.lastMessage = msg.content;
+					                    chatRoom.lastMessageTime = msg.createdAt;
+					                    chatRoom.unreadCount = (msg.senderId !== senderId && roomId !== activeChatRoomId) ? (chatRoom.unreadCount || 0) + 1 : 0;
+					                    filterAndUpdateChatList(); // UI 갱신
+					                }
 	            }
 	        }
 	    });
@@ -375,6 +405,13 @@ document.addEventListener("DOMContentLoaded", function () {
 	        destination: `/app/chat.enterRoom.${roomId}`,
 	        body: JSON.stringify({ userId: senderId })
 	    });
+		
+		// 채팅방 입장 후 unreadCount 갱신
+		const chatRoom = chatRoomsCache.find(room => room.id === roomId);
+		    if (chatRoom) {
+		        chatRoom.unreadCount = 0;
+		        filterAndUpdateChatList();
+		    }
 	}
 
     function subscribeToUserStatus() {
@@ -403,30 +440,63 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function subscribeToChatRoomUpdates() {
-        if (!isConnected) {
-            console.warn("WebSocket이 연결되어 있지 않습니다. 먼저 연결을 시도합니다.");
-            return connectWebSocket().then(() => subscribeToChatRoomUpdates());
-        }
+	function subscribeToChatRoomUpdates() {
+	    if (!stompClient || !stompClient.connected) {
+	        console.error("STOMP 클라이언트가 연결되지 않았습니다.");
+	        return;
+	    }
 
-        stompClient.subscribe(`/topic/chatrooms.${userId}`, function (message) {
-            console.log("채팅방 목록 업데이트 수신:", message.body);
-            const data = JSON.parse(message.body);
-            const updatedChatRoomId = data.chatRoomId;
+	    stompClient.subscribe(`/topic/chatrooms.${senderId}`, function (message) {
+	        const payload = JSON.parse(message.body);
+	        console.log("채팅방 업데이트 메시지 수신:", payload);
 
-            fetch(`/api/chat/rooms/${updatedChatRoomId}?currentUserId=${senderId}`)
-                .then(response => response.json())
-                .then(updatedChatRoom => {
-                    const index = chatRoomsCache.findIndex(room => room.id === updatedChatRoomId);
-                    if (index !== -1) {
-                        chatRoomsCache[index] = updatedChatRoom;
-                    } else {
-                        chatRoomsCache.push(updatedChatRoom);
-                    }
-                    filterAndUpdateChatList();
-                });
-        });
-    }
+	        if (payload.action === "create" && payload.chatRoomId) {
+	            fetch(`/api/chat/rooms/${payload.chatRoomId}?currentUserId=${senderId}`)
+	                .then(response => response.json())
+	                .then(chatRoom => {
+	                    if (!chatRoomsCache.find(room => room.id === chatRoom.id)) {
+							if (!chatRoomsCache.find(room => room.id === chatRoom.id)) {
+							    addChatRoomIfNotExists(chatRoom);
+							}
+	                        if (urlChatRoomId === chatRoom.id) {
+	                            const chatItem = document.querySelector(`.chat-item[data-id='${chatRoom.id}']`);
+	                            if (chatItem) openChatRoom(chatItem);
+	                        }
+							filterAndUpdateChatList();
+	                    }
+	                })
+	                .catch(error => console.error("채팅방 정보 가져오기 실패:", error));
+	        } else if (payload.action === "leave" && payload.chatRoomId) {
+	            chatRoomsCache = chatRoomsCache.filter(room => room.id !== payload.chatRoomId);
+	            updateChatList(chatRoomsCache);
+				filterAndUpdateChatList();
+	            if (activeChatRoomId === payload.chatRoomId) {
+	                activeChatRoomId = null;
+	                chatRoomId = null;
+	                chatMain.setAttribute("data-chatroom-id", "");
+	                document.getElementById("chatUserName").innerText = "";
+	                messagesCache = [];
+	                previewMessages.clear();
+	                renderMessages();
+	                window.history.pushState({}, '', '/chat');
+	            }
+	        }else if (payload.action === "update" && payload.chatRoomId) {
+			            // 채팅방 정보 업데이트 (예: unreadCount 갱신)
+			            fetch(`/api/chat/rooms/${payload.chatRoomId}?currentUserId=${senderId}`)
+			                .then(response => response.json())
+			                .then(updatedChatRoom => {
+			                    const index = chatRoomsCache.findIndex(room => room.id === updatedChatRoom.id);
+			                    if (index !== -1) {
+			                        chatRoomsCache[index] = updatedChatRoom; // 캐시 업데이트
+			                    } else {
+			                        chatRoomsCache.push(updatedChatRoom);
+			                    }
+			                    filterAndUpdateChatList(); // UI 갱신
+			                })
+			                .catch(error => console.error("채팅방 업데이트 실패:", error));
+			        }
+	    });
+	}
 
     function unsubscribeAll() {
         activeSubscriptions.forEach(subscription => {
@@ -440,18 +510,74 @@ document.addEventListener("DOMContentLoaded", function () {
         activeSubscriptions = [];
     }
 
-    function initialize() {
-        connectWebSocket().then(() => {
-            subscribeToChatRoomUpdates();
-            subscribeToUserStatus();
-            fetchChatRooms();
-            if (chatRoomId && chatRoomId !== 0 && !isNaN(chatRoomId)) {
-                fetchChatMessages(chatRoomId).then(() => {
-                    subscribeToChatRoom(chatRoomId);
-                });
-            }
-        });
-    }
+	function initialize() {
+	    connectWebSocket()
+	        .then(() => {
+	            subscribeToChatRoomUpdates();
+	            subscribeToUserStatus();
+	            return fetchChatRooms();
+	        })
+	        .then(() => {
+	            console.log("fetchChatRooms 완료, chatRoomsCache:", chatRoomsCache);
+
+	            // URL 파라미터 기반 채팅방 열기 시도
+	            if (urlChatRoomId) {
+	                const cachedRoom = chatRoomsCache.find(room => room.id === urlChatRoomId);
+	                if (cachedRoom) {
+	                    const chatItem = document.querySelector(`.chat-item[data-id='${urlChatRoomId}']`);
+	                    if (chatItem) {
+	                        openChatRoom(chatItem);
+	                    } else {
+	                        filterAndUpdateChatList();
+	                        setTimeout(() => {
+	                            const fallbackItem = document.querySelector(`.chat-item[data-id='${urlChatRoomId}']`);
+	                            if (fallbackItem) openChatRoom(fallbackItem);
+	                        }, 100);
+	                    }
+	                } else {
+	                    // 캐시에 없으면 서버에서 강제로 로딩 후 열기
+	                    fetch(`/api/chat/rooms/${urlChatRoomId}?currentUserId=${senderId}`)
+	                        .then(res => {
+	                            if (!res.ok) throw new Error("채팅방 조회 실패");
+	                            return res.json();
+	                        })
+	                        .then(chatRoom => {
+	                            addChatRoomIfNotExists(chatRoom);
+	                            filterAndUpdateChatList();
+	                            setTimeout(() => {
+	                                const newChatItem = document.querySelector(`.chat-item[data-id='${chatRoom.id}']`);
+	                                if (newChatItem) openChatRoom(newChatItem);
+	                                else openChatRoomFallback(chatRoom); // 정말 마지막 fallback
+	                            }, 100);
+	                        })
+	                        .catch(err => {
+	                            console.error("URL 채팅방 로딩 실패:", err);
+	                            alert("채팅방을 불러오지 못했습니다.");
+	                        });
+	                }
+	            }
+	        })
+	        .catch(error => {
+	            console.error("초기화 실패:", error);
+	        });
+	}
+
+	
+	function openChatRoomFallback(chatRoom) {
+	    console.warn("fallback 방식으로 채팅방 열기 시도:", chatRoom);
+	    chatRoomId = chatRoom.id;
+	    activeChatRoomId = chatRoom.id;
+	    chatMain.setAttribute("data-chatroom-id", chatRoom.id);
+	    document.getElementById("chatUserName").innerText = chatRoom.otherUserNickName || "알 수 없는 사용자";
+
+	    fetchChatMessages(chatRoom.id).then(() => {
+	        subscribeToChatRoom(chatRoom.id);
+	    });
+
+	    window.history.pushState({}, '', `/chat?chatRoomId=${chatRoom.id}`);
+	}
+
+
 
     let typingTimeout;
 	messageInput.addEventListener("input", function () {
@@ -471,69 +597,108 @@ document.addEventListener("DOMContentLoaded", function () {
 	            body: JSON.stringify({ senderId })
 	        });
 	    }, 500);
+		
+		// 채팅 전송 버튼 
+      	const text = messageInput.value.trim();
+          if (text !== "") {
+              sendButton.classList.add("active");
+              sendButton.classList.remove("disabled");
+          } else {
+              sendButton.classList.remove("active");
+              sendButton.classList.add("disabled");
+          }
 	});
 
-    function fetchChatMessages(chatRoomId, retryCount = 3) {
-        if (!chatRoomId || chatRoomId === 0 || isNaN(chatRoomId)) {
-            console.warn("chatRoomId가 유효하지 않습니다:", chatRoomId);
-            return Promise.reject("Invalid chatRoomId");
-        }
-        return fetch(`/api/chat/rooms/${chatRoomId}/messages?currentUserId=${senderId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(messages => {
-                console.log("API 응답 메시지:", messages);
-                if (!Array.isArray(messages)) {
-                    console.error("채팅 메시지가 배열이 아닙니다!", messages);
-                    return;
-                }
-                messagesCache = messages;
-                renderMessages();
-            })
-            .catch(error => {
-                console.error("채팅 메시지 가져오기 실패:", error);
-                if (retryCount > 0) {
-                    console.log(`재시도 남은 횟수: ${retryCount}`);
-                    return new Promise(resolve => setTimeout(resolve, 2000))
-                        .then(() => fetchChatMessages(chatRoomId, retryCount - 1));
-                }
-                alert("채팅 메시지를 가져오는 데 실패했습니다. 다시 시도해주세요.");
-                throw error;
-            });
-    }
+	function fetchChatMessages(chatRoomId, retryCount = 3) {
+	    if (!chatRoomId || chatRoomId === 0 || isNaN(chatRoomId)) {
+	        console.warn("chatRoomId가 유효하지 않습니다:", chatRoomId);
+	        return Promise.reject("Invalid chatRoomId");
+	    }
+	    return fetch(`/api/chat/rooms/${chatRoomId}/messages?currentUserId=${senderId}`)
+	        .then(response => {
+	            if (!response.ok) {
+	                if (response.status === 403) {
+	                    // 사용자가 채팅방에 참여하지 않은 경우
+	                    const shouldRejoin = confirm("이 채팅방에 참여하지 않았습니다. 다시 참여하시겠습니까?");
+	                    if (shouldRejoin) {
+	                        return fetch(`/api/chat/rooms/${chatRoomId}/rejoin?currentUserId=${senderId}`, {
+	                            method: "POST"
+	                        })
+	                            .then(rejoinResponse => {
+	                                if (!rejoinResponse.ok) {
+	                                    throw new Error("재참여 실패");
+	                                }
+	                                // 재참여 성공 후 메시지 다시 조회
+	                                return fetch(`/api/chat/rooms/${chatRoomId}/messages?currentUserId=${senderId}`);
+	                            })
+	                            .then(retryResponse => {
+	                                if (!retryResponse.ok) {
+	                                    throw new Error(`HTTP error! status: ${retryResponse.status}`);
+	                                }
+	                                return retryResponse.json();
+	                            });
+	                    } else {
+	                        throw new Error("사용자가 채팅방에 참여하지 않았습니다.");
+	                    }
+	                }
+	                throw new Error(`HTTP error! status: ${response.status}`);
+	            }
+	            return response.json();
+	        })
+	        .then(messages => {
+	            console.log("API 응답 메시지:", messages);
+	            if (!Array.isArray(messages)) {
+	                console.error("채팅 메시지가 배열이 아닙니다!", messages);
+	                return;
+	            }
+	            messagesCache = messages;
+	            renderMessages();
+	        })
+	        .catch(error => {
+	            console.error("채팅 메시지 가져오기 실패:", error);
+	            if (retryCount > 0) {
+	                console.log(`재시도 남은 횟수: ${retryCount}`);
+	                return new Promise(resolve => setTimeout(resolve, 2000))
+	                    .then(() => fetchChatMessages(chatRoomId, retryCount - 1));
+	            }
+	            alert("채팅 메시지를 가져오는 데 실패했습니다: " + error.message);
+	            throw error;
+	        });
+	}
 
-    function renderMessages() {
-        chatMessages.innerHTML = "";
-        let lastDate = null;
+	function renderMessages() {
+	    chatMessages.innerHTML = "";
+	    let lastDate = null;
 
-        messagesCache.forEach((message, index) => {
-            const date = message.createdAt ? new Date(message.createdAt) : null;
-            const currentDateStr = date?.toDateString();
-            if (currentDateStr !== lastDate) {
-                const separator = document.createElement("div");
-                separator.classList.add("date-separator");
-                separator.textContent = formatTime(message.createdAt, "separator");
-                chatMessages.appendChild(separator);
-                lastDate = currentDateStr;
-            }
+	    messagesCache.forEach((message, index) => {
+	        const date = message.createdAt ? new Date(message.createdAt) : null;
+	        const currentDateStr = date?.toDateString();
+	        if (currentDateStr !== lastDate) {
+	            const separator = document.createElement("div");
+	            separator.classList.add("date-separator");
+	            separator.textContent = formatTime(message.createdAt, "separator");
+	            chatMessages.appendChild(separator);
+	            lastDate = currentDateStr;
+	        }
 
-            const el = createMessageElement(message, index === messagesCache.length - 1);
-            if (el) chatMessages.appendChild(el);
-        });
+	        const el = createMessageElement(message, index === messagesCache.length - 1);
+	        if (el) chatMessages.appendChild(el);
+	    });
 
-        if (messagesCache.length === 0) {
-            chatMessages.appendChild(noChatMessage);
-        }
+	    // 메시지가 없으면 "채팅이 없어요!" 표시
+	    if (messagesCache.length === 0) {
+	        noChatMessage.style.display = "block";
+	        chatMessages.appendChild(noChatMessage);
+	    } else {
+	        noChatMessage.style.display = "none";
+	    }
 
-        chatMessages.appendChild(typingIndicator);
-        requestAnimationFrame(() => {
-            scrollToBottom(true);
-        });
-    }
+	    chatMessages.appendChild(typingIndicator);
+	    requestAnimationFrame(() => {
+	        scrollToBottom(true);
+	    });
+	}
+
 
     function createMessageElement(message, isLastMessage) {
         console.log(`메시지 ID: ${message.id}, senderName: ${message.senderName}`);
@@ -566,7 +731,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             wrapper.setAttribute("data-urls", JSON.stringify(urls));
 
-            const displayCount = Math.min(urls.length, 4);
+            const displayCount = Math.min(urls.length, 3);
             for (let i = 0; i < displayCount; i++) {
                 const img = document.createElement("img");
                 img.src = urls[i];
@@ -577,7 +742,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 wrapper.appendChild(img);
             }
 
-            if (urls.length > 4) {
+            if (urls.length > 3) {
                 const countIndicator = document.createElement("div");
                 countIndicator.classList.add("image-count");
                 countIndicator.textContent = `${displayCount}/${urls.length}`;
@@ -668,120 +833,246 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!updated) {
             console.log("업데이트된 메시지가 없습니다.");
-        } else {
+			const chatRoom = chatRoomsCache.find(room => room.id === activeChatRoomId);
+        }if (chatRoom) {
+		    chatRoom.unreadCount = 0; // 읽음 상태 반영 후 읽지 않은 메시지 개수 초기화
+		    filterAndUpdateChatList(); // 채팅방 목록 갱신
+		} else {
             console.log("업데이트 후 messagesCache:", messagesCache);
         }
 
         renderMessages();
     }
+	
+	function updateChatRoomInfo(chatRoomId) {
+	    const chatRoom = chatRoomsCache.find(room => room.id === chatRoomId);
+	    if (!chatRoom) return;
 
-    function openChatRoom(chatItem) {
-        let newChatRoomId = parseInt(chatItem.getAttribute("data-id"));
-        activeChatRoomId = newChatRoomId;
-        chatMain.setAttribute("data-chatroom-id", newChatRoomId);
-        chatRoomId = newChatRoomId;
-        console.log("선택된 chatRoomId:", newChatRoomId);
-        if (!newChatRoomId || isNaN(newChatRoomId)) {
-            console.error("유효하지 않은 chatRoomId:", newChatRoomId);
-            alert("채팅방을 열 수 없습니다. 다시 시도해주세요.");
-            return;
-        }
+	    // 마지막 메시지 및 읽음 상태 업데이트
+	    filterAndUpdateChatList(); // UI 갱신
 
-        const chatRoom = chatRoomsCache.find(room => room.id === newChatRoomId);
-        const chatUserName = chatRoom ? chatRoom.otherUserNickName.split(",")[0].trim() : "알 수 없는 사용자";
-        document.getElementById("chatUserName").innerText = chatUserName;
+	    // 특정 채팅방에 대한 unreadCount 갱신
+	    if (chatRoom.unreadCount === 0) {
+	        console.log(`채팅방 ${chatRoomId}의 unreadCount가 0으로 업데이트되었습니다.`);
+	    }
+	}
 
-        chatMain.setAttribute("data-chatroom-id", newChatRoomId);
-        chatRoomId = newChatRoomId;
+	function openChatRoom(chatItem) {
+	    let newChatRoomId = parseInt(chatItem.getAttribute("data-id"));
+	    const chatRoom = chatRoomsCache.find(room => room.id === newChatRoomId);
 
-        messagesCache = [];
-        previewMessages.clear();
-        fetchChatMessages(chatRoomId).then(() => {
-            subscribeToChatRoom(chatRoomId);
-        });
-        filterAndUpdateChatList();
-    }
+	    if (!chatRoom) {
+	        console.error("채팅방 정보를 찾을 수 없습니다:", newChatRoomId);
+	        alert("채팅방 정보를 찾을 수 없습니다.");
+	        return;
+	    }
+		
+			// 안 읽음 카운트를 0으로 초기화
+		    chatRoom.unreadCount = 0;
+		    filterAndUpdateChatList(); // UI 갱신
 
-    function updateChatList(chatRooms) {
-        console.log("채팅방 목록 데이터:", chatRooms);
-        chatRooms.sort((a, b) => {
-            const timeA = a.lastMessageTime ? new Date(a.lastMessageTime).getTime() : 0;
-            const timeB = b.lastMessageTime ? new Date(b.lastMessageTime).getTime() : 0;
-            return timeB - timeA;
-        });
+	    document.querySelectorAll(".chat-item.active-room").forEach(item => {
+	        item.classList.remove("active-room");
+	    });
+	    chatItem.classList.add("active-room");
 
-        const fragment = document.createDocumentFragment();
-        const searchTerm = searchChat.value.trim().toLowerCase();
+	    activeChatRoomId = newChatRoomId;
+	    chatMain.setAttribute("data-chatroom-id", newChatRoomId);
+	    chatRoomId = newChatRoomId;
 
-        if (chatRooms.length === 0) {
-            const noResults = document.createElement("li");
-            noResults.classList.add("no-results");
-            noResults.textContent = "검색 결과가 없습니다.";
-            fragment.appendChild(noResults);
-        } else {
-            chatRooms.forEach(chat => {
-                console.log(`채팅방 ID: ${chat.id}, otherUserNickName: ${chat.otherUserNickName}`);
-                const chatItem = document.createElement("li");
-                chatItem.classList.add("chat-item");
-                chatItem.setAttribute("data-id", chat.id);
-                if (chat.id === activeChatRoomId) {
-                    chatItem.classList.add("active-room");
-                }
-                let unreadBadge = chat.unreadCount > 0 
-                    ? `<span class="unread-badge small">${chat.unreadCount}</span>` 
-                    : "";
-                let lastMessageTime = chat.lastMessageTime ? formatTime(chat.lastMessageTime, "list") : "";
-                let lastMessage = chat.lastMessage || "메시지가 없습니다.";
-                if (lastMessage.length > 20) {
-                    lastMessage = lastMessage.substring(0, 20) + "...";
-                }
-                const statusIndicator = chat.otherUserIsOnline ? "🟢" : "🔴";
-                
-                const otherUserName = chat.otherUserNickName ? chat.otherUserNickName.split(",")[0].trim() : "알 수 없는 사용자";
-                
-                // 검색어 하이라이팅
-                let displayName = otherUserName;
-                if (searchTerm) {
-                    const regex = new RegExp(`(${searchTerm})`, "gi");
-                    displayName = otherUserName.replace(regex, '<span class="highlight">$1</span>');
-                }
+	    document.getElementById("chatUserName").innerText = chatRoom.otherUserNickName || "알 수 없는 사용자";
+
+	    // 경고 메시지 표시 (첫 번째 열림 시에만)
+	    const hasSeenWarning = localStorage.getItem(`warningSeen_${newChatRoomId}`);
+	    if (!hasSeenWarning) {
+	        const warningMessage = document.createElement("div");
+	        warningMessage.classList.add("warning-message");
+	        warningMessage.innerHTML = `
+            <div class="warning-box">
+              <div class="warning-text">
+                <span class="warning-icon">⚠️</span>
+                <p>
+                  비방, 욕설, 성희롱, 개인정보 요구 등은<br>
+                  <strong>모두 형사처벌 대상</strong>이 될 수 있습니다.<br>
+                  피싱 · 스미싱 · 불법 거래 유도 등 사이버 범죄도<br>
+                  <strong>엄중한 법적 책임</strong>을 지게 됩니다.
+                </p>
+              </div>
+              <div class="warning-action">
+                <button id="closeWarning">확인</button>
+              </div>
+            </div>
+	        `;
+	        chatMessages.innerHTML = ""; // 기존 내용 지우기
+	        chatMessages.appendChild(warningMessage);
+
+	        const closeButton = warningMessage.querySelector("#closeWarning");
+	        closeButton.addEventListener("click", () => {
+	            warningMessage.remove();
+	            localStorage.setItem(`warningSeen_${newChatRoomId}`, "true");
+	            fetchChatMessages(chatRoomId).then(() => {
+	                subscribeToChatRoom(chatRoomId);
+	            });
+	        });
+	    } else {
+	        fetchChatMessages(chatRoomId).then(() => {
+	            subscribeToChatRoom(chatRoomId);
+	        });
+	    }
+
+	    window.history.pushState({}, '', `/chat?chatRoomId=${chatRoomId}`);
+	}
+
+
+
+	function updateChatList(chatRooms) {
+	    console.log("채팅방 목록 데이터:", chatRooms);
+	    chatRooms.sort((a, b) => {
+	        const timeA = a.lastMessageTime ? new Date(a.lastMessageTime).getTime() : 0;
+	        const timeB = b.lastMessageTime ? new Date(b.lastMessageTime).getTime() : 0;
+	        return timeB - timeA;
+	    });
+
+	    const fragment = document.createDocumentFragment();
+	    const searchTerm = searchChat.value.trim().toLowerCase();
+
+	    if (chatRooms.length === 0) {
+	        const noResults = document.createElement("li");
+	        noResults.classList.add("no-results");
+	        noResults.textContent = "채팅 리스트가 비어 있습니다.";
+	        fragment.appendChild(noResults);
+	    } else {
+	        chatRooms.forEach(chat => {
+	            console.log(`채팅방 ID: ${chat.id}, otherUserNickName: ${chat.otherUserNickName}`);
+	            const chatItem = document.createElement("li");
+	            chatItem.classList.add("chat-item");
+	            chatItem.setAttribute("data-id", chat.id);
+	            if (chat.id === activeChatRoomId) {
+	                chatItem.classList.add("active-room");
+	            }
+	            let unreadBadge = (chat.unreadCount > 0)
+	                ? `<span class="unread-badge small">${chat.unreadCount}</span>` 
+	                : "";
+	            let lastMessageTime = chat.lastMessageTime ? formatTime(chat.lastMessageTime, "list") : "";
+	            let lastMessage = chat.lastMessage || "메시지가 없습니다.";
+	            if (lastMessage.length > 20) {
+	                lastMessage = lastMessage.substring(0, 20) + "...";
+	            }
+	            const statusIndicator = chat.otherUserIsOnline ? "🟢" : "🔴";
+	            
+	            const otherUserName = chat.otherUserNickName ? chat.otherUserNickName.split(",")[0].trim() : "알 수 없는 사용자";
+	            
+	            // 검색어 하이라이팅
+	            let displayName = otherUserName;
+	            if (searchTerm) {
+	                const regex = new RegExp(`(${searchTerm})`, "gi");
+	                displayName = otherUserName.replace(regex, '<span class="highlight">$1</span>');
+	            }
 
                 let avatarContent;
                 if (!chat.otherUserAvatar || chat.otherUserAvatar.trim() === "") {
+                    console.log(`채팅방 ID: ${chat.id}의 otherUserAvatar가 비어 있습니다. 기본 이모지 표시.`);
                     avatarContent = `<div class="chat-avatar emoji">🐸</div>`;
                 } else {
-                    const avatarPath = `/api/images/${chat.otherUserAvatar}`;
-                    avatarContent = `<img src="${avatarPath}" class="chat-avatar" alt="상대방 이미지" onerror="this.outerHTML='<div class=\\'chat-avatar emoji\\'>🐸</div>'">`;
+                    const avatarPath = `${chat.otherUserAvatar}`;
+                    console.log(`이미지 경로: ${avatarPath}`); // 디버깅 로그 추가
+                    avatarContent = `<img src="${avatarPath}" class="chat-avatar" alt="상대방 이미지" onerror="console.error('이미지 로드 실패: ${avatarPath}'); this.outerHTML='<div class=\\'chat-avatar emoji\\'>🐸</div>'">`;
                 }
 
-                chatItem.innerHTML = `
-                    <input type="checkbox" class="chat-select-checkbox">
-                    <div class="chat-avatar-wrapper">
-                        ${avatarContent}
-                        <span class="status-indicator">${statusIndicator}</span>
-                    </div>
-                    <div class="chat-info">
-                        <div class="chat-title">
-                            <span>${displayName}</span>
-                            <span class="chat-time">${lastMessageTime}</span>
-                        </div>
-                        <div class="chat-preview">
-                            <span>${lastMessage}</span>
-                            ${chat.unreadCount > 0 ? `<span class="unread-badge small">${chat.unreadCount}</span>` : ""}
-                        </div>
-                    </div>
-                `;
-                chatItem.addEventListener("click", function (e) {
-                    if (e.target.classList.contains("chat-select-checkbox")) return;
-                    openChatRoom(chatItem);
-                });
-                fragment.appendChild(chatItem);
-            });
-        }
+	            chatItem.innerHTML = `
+	                <input type="checkbox" class="chat-select-checkbox">
+	                <div class="chat-avatar-wrapper">
+	                    ${avatarContent}
+	                    <span class="status-indicator">${statusIndicator}</span>
+	                </div>
+	                <div class="chat-info">
+	                    <div class="chat-title">
+	                        <span>${displayName}</span>
+	                        <span class="chat-time">${lastMessageTime}</span>
+	                    </div>
+	                    <div class="chat-preview">
+	                        <span>${lastMessage}</span>
+	                        ${chat.unreadCount > 0 ? `<span class="unread-badge small">${chat.unreadCount}</span>` : ""}
+	                    </div>
+	                </div>
+	            `;
+	            chatItem.addEventListener("click", function (e) {
+	                if (e.target.classList.contains("chat-select-checkbox")) return;
+	                openChatRoom(chatItem);
+	            });
+	            fragment.appendChild(chatItem);
+	        });
+	    }
 
-        chatList.innerHTML = "";
-        chatList.appendChild(fragment);
-    }
+	    chatList.innerHTML = "";
+	    chatList.appendChild(fragment);
+	}
+	
+	// 채팅 버튼 클릭 시 호출
+	function getCurrentUserId() {
+	    const userId = document.body.dataset.userId;
+	    if (!userId) {
+	        console.error("사용자 ID를 찾을 수 없습니다.");
+	        throw new Error("사용자 ID가 설정되지 않았습니다.");
+	    }
+	    return parseInt(userId, 10);
+	}
+	
+	let isCreatingChatRoom = false;
+
+	const chatButtons = document.querySelectorAll(".btn-chat");
+	chatButtons.forEach(button => {
+	    button.addEventListener("click", debounce(async () => {
+	        if (isCreatingChatRoom) return;
+	        isCreatingChatRoom = true;
+	        button.disabled = true;
+
+	        const otherUserId = parseInt(button.getAttribute("data-other-user-id"));
+	        if (!otherUserId) {
+	            console.error("상대방 ID가 없습니다!");
+	            alert("상대방 ID가 필요합니다.");
+	            button.disabled = false;
+	            isCreatingChatRoom = false;
+	            return;
+	        }
+
+	        try {
+	            if (!chatRoomsCache || chatRoomsCache.length === 0) {
+	                await fetchChatRooms();
+	            }
+	            await ensureChatRoom(senderId, otherUserId);
+	        } catch (err) {
+	            console.error("채팅 버튼 처리 중 오류:", err);
+	            alert("채팅방 생성 실패: " + err.message);
+	        } finally {
+	            button.disabled = false;
+	            isCreatingChatRoom = false;
+	        }
+	    }, 300));
+	});
+
+	function debounce(func, wait) {
+	    let timeout;
+	    return function (...args) {
+	        clearTimeout(timeout);
+	        timeout = setTimeout(() => func.apply(this, args), wait);
+	    };
+	}
+
+	function formatDateTime(dateTime) {
+	    if (!dateTime) return "";
+	    try {
+	        const date = new Date(dateTime);
+	        if (isNaN(date.getTime())) {
+	            console.error("잘못된 날짜 형식:", dateTime);
+	            return "";
+	        }
+	        return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+	    } catch (error) {
+	        console.error("날짜 포맷팅 오류:", error, dateTime);
+	        return "";
+	    }
+	}
 
     let lastSentTime = 0;
     const MIN_SEND_INTERVAL = 1000;
@@ -1081,29 +1372,118 @@ document.addEventListener("DOMContentLoaded", function () {
 	            alert(`파일 업로드에 실패했습니다: ${file.name} - ${error.message}`);
 	        });
 	}
+	
+	let chatRoomCreationLock = new Map();
+
+	async function ensureChatRoom(userId1, userId2) {
+	    const key = `${userId1}-${userId2}`;
+	    if (chatRoomCreationLock.has(key)) {
+	        console.log(`이미 ${key}에 대한 채팅방 생성 요청 진행 중`);
+	        return chatRoomCreationLock.get(key);
+	    }
+
+	    const promise = (async () => {
+	        try {
+	            const res = await fetch(`/api/chat/rooms/find?userId1=${userId1}&userId2=${userId2}`);
+	            if (res.ok) {
+	                const roomDto = await res.json();
+	                if (!chatRoomsCache.find(r => r.id === roomDto.id)) {
+	                    addChatRoomIfNotExists(roomDto);
+	                    filterAndUpdateChatList();
+	                }
+	                const chatItem = document.querySelector(`.chat-item[data-id='${roomDto.id}']`);
+	                if (chatItem) openChatRoom(chatItem);
+	                return roomDto;
+	            }
+
+	            const response = await fetch(`/api/chat/rooms?userId1=${userId1}&userId2=${userId2}`, {
+	                method: "POST",
+	                headers: { "Content-Type": "application/json" }
+	            });
+
+	            if (!response.ok) {
+	                const error = await response.json();
+	                throw new Error(error.error || "채팅방 생성 실패");
+	            }
+
+	            const chatRoomDto = await response.json();
+	            chatRoomsCache.push(chatRoomDto);
+	            filterAndUpdateChatList();
+	            const chatItem = document.querySelector(`.chat-item[data-id='${chatRoomDto.id}']`);
+	            if (chatItem) openChatRoom(chatItem);
+	            return chatRoomDto;
+	        } catch (err) {
+	            console.error("채팅방 처리 중 오류:", err);
+	            throw err;
+	        } finally {
+	            chatRoomCreationLock.delete(key);
+	        }
+	    })();
+
+	    chatRoomCreationLock.set(key, promise);
+	    return promise;
+	}
 
     let chatRoomsCache = [];
 
-    function fetchChatRooms(retryCount = 3) {
-        return fetch(`/api/chat/rooms/user/${userId}`)
-            .then(response => {
-                if (!response.ok) throw new Error("채팅방 목록 가져오기 실패");
-                return response.json();
-            })
-            .then(data => {
-                console.log("채팅방 목록:", data);
-                chatRoomsCache = data;
-                filterAndUpdateChatList();
-            })
-            .catch(error => {
-                console.error("채팅방 목록 가져오기 실패:", error);
-                if (retryCount > 0) {
-                    setTimeout(() => fetchChatRooms(retryCount - 1), 2000);
-                } else {
-                    chatList.innerHTML = '<li class="error">채팅방 목록을 불러오지 못했습니다.</li>';
-                }
-            });
-    }
+	function fetchChatRooms(retryCount = 3) {
+	    return fetch(`/api/chat/rooms/user/${userId}`)
+	        .then(response => {
+	            if (!response.ok) throw new Error("채팅방 목록 가져오기 실패");
+	            return response.json();
+	        })
+	        .then(data => {
+	            console.log("채팅방 목록:", data);
+	            chatRoomsCache = data;
+	            filterAndUpdateChatList();
+
+	            if (urlChatRoomId) {
+	                const targetChatRoom = chatRoomsCache.find(room => room.id === urlChatRoomId);
+	                if (targetChatRoom) {
+	                    setTimeout(() => {
+	                        const targetChatItem = document.querySelector(`.chat-item[data-id='${urlChatRoomId}']`);
+	                        if (targetChatItem) {
+	                            targetChatItem.click();
+	                        }
+	                    }, 100);
+	                } else {
+	                    console.warn("URL chatRoomId에 해당하는 채팅방을 찾을 수 없습니다:", urlChatRoomId);
+	                    // 서버에서 직접 조회
+	                    fetch(`/api/chat/rooms/${urlChatRoomId}?currentUserId=${senderId}`)
+	                        .then(res => {
+	                            if (!res.ok) {
+	                                throw new Error("채팅방 조회 실패");
+	                            }
+	                            return res.json();
+	                        })
+	                        .then(chatRoom => {
+								if (!chatRoomsCache.find(room => room.id === chatRoom.id)) {
+								    addChatRoomIfNotExists(chatRoom);
+								}
+	                            setTimeout(() => {
+	                                const targetChatItem = document.querySelector(`.chat-item[data-id='${urlChatRoomId}']`);
+	                                if (targetChatItem) {
+	                                    targetChatItem.click();
+	                                }
+	                            }, 100);
+	                        })
+	                        .catch(error => {
+	                            console.error("채팅방 조회 실패:", error);
+	                            alert("해당 채팅방을 찾을 수 없습니다: " + error.message);
+	                        });
+	                }
+	            }
+	        })
+	        .catch(error => {
+	            console.error("채팅방 목록 가져오기 실패:", error);
+	            if (retryCount > 0) {
+	                setTimeout(() => fetchChatRooms(retryCount - 1), 2000);
+	            } else {
+	                chatList.innerHTML = '<li class="error">채팅방 목록을 불러오지 못했습니다.</li>';
+	            }
+	        });
+	}
+
 
     initialize();
 
@@ -1115,67 +1495,65 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
     const deleteBtn = document.querySelector(".delete-btn");
-    deleteBtn.addEventListener("click", () => {
-        const selectedChatIds = Array.from(document.querySelectorAll(".chat-select-checkbox"))
-            .filter(checkbox => checkbox.checked)
-            .map(checkbox => {
-                const chatItem = checkbox.closest(".chat-item");
-                return parseInt(chatItem.getAttribute("data-id"));
-            });
+	deleteBtn.addEventListener("click", async () => {
+	    const selectedChatIds = Array.from(document.querySelectorAll(".chat-select-checkbox"))
+	        .filter(checkbox => checkbox.checked)
+	        .map(checkbox => {
+	            const chatItem = checkbox.closest(".chat-item");
+	            return parseInt(chatItem.getAttribute("data-id"));
+	        });
 
-        if (selectedChatIds.length === 0) {
-            alert("삭제할 채팅방을 선택해주세요.");
-            return;
-        }
+	    if (selectedChatIds.length === 0) {
+	        alert("삭제할 채팅방을 선택해주세요.");
+	        return;
+	    }
 
-        const confirmDelete = confirm(`${selectedChatIds.length}개 채팅방에서 나가시겠습니까?`);
-        if (!confirmDelete) return;
+	    const confirmDelete = confirm(`${selectedChatIds.length}개 채팅방에서 나가시겠습니까?`);
+	    if (!confirmDelete) return;
 
-        selectedChatIds.forEach(chatRoomIdToLeave => {
-            fetch(`/api/chat/rooms/${chatRoomIdToLeave}/leave`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ userId: senderId })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(errorData => {
-                            throw new Error(errorData.error || "나가기 실패");
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(`채팅방 ${chatRoomIdToLeave} 나가기 완료, 삭제 여부: ${data.isDeleted}`);
-                    
-                    if (chatRoomId === chatRoomIdToLeave) {
-                        console.log("현재 열려 있는 채팅방에서 나감 처리됨 - UI 초기화");
+	    for (const chatRoomIdToLeave of selectedChatIds) {
+	        try {
+	            const response = await fetch(`/api/chat/rooms/${chatRoomIdToLeave}/leave`, {
+	                method: "POST",
+	                headers: {
+	                    "Content-Type": "application/json"
+	                },
+	                body: JSON.stringify({ userId: senderId })
+	            });
 
-                        chatRoomId = null;
-                        activeChatRoomId = null;
-                        chatMain.setAttribute("data-chatroom-id", "");
-                        document.getElementById("chatUserName").innerText = "";
-                        chatMessages.innerHTML = "";
-                        messagesCache = [];
+	            if (!response.ok) {
+	                const errorData = await response.json();
+	                throw new Error(errorData.error || "나가기 실패");
+	            }
 
-                        typingIndicator.style.display = "none";
+	            const data = await response.json();
+	            console.log(`채팅방 ${chatRoomIdToLeave} 나가기 완료, 삭제 여부: ${data.isDeleted}`);
 
-                        unsubscribeAll();
-                    }
+	            // 현재 열린 채팅방이면 UI 초기화
+	            if (chatRoomId === chatRoomIdToLeave) {
+	                chatRoomId = null;
+	                activeChatRoomId = null;
+	                chatMain.setAttribute("data-chatroom-id", "");
+	                document.getElementById("chatUserName").innerText = "";
+	                chatMessages.innerHTML = "";
+	                messagesCache = [];
+	                typingIndicator.style.display = "none";
+	                unsubscribeAll();
+	            }
 
-                    if (data.isDeleted) {
-                        chatRoomsCache = chatRoomsCache.filter(room => room.id !== chatRoomIdToLeave);
-                        filterAndUpdateChatList();
-                    } else {
-                        fetchChatRooms();
-                    }
-                })
-                .catch(err => {
-                    console.error(`채팅방 ${chatRoomIdToLeave} 나가기 중 오류:`, err);
-                    alert(`채팅방 나가기에 실패했습니다: ${err.message}`);
-                });
-        });
-    });
+	            // 캐시와 UI 업데이트는 마지막에 한 번만 수행할 수 있도록
+	            if (data.isDeleted) {
+	                chatRoomsCache = chatRoomsCache.filter(room => room.id !== chatRoomIdToLeave);
+	            }
+
+	        } catch (err) {
+	            console.error(`채팅방 ${chatRoomIdToLeave} 나가기 중 오류:`, err);
+	            alert(`채팅방 나가기에 실패했습니다: ${err.message}`);
+	        }
+	    }
+
+	    // 모든 삭제 완료 후 UI 갱신
+	    filterAndUpdateChatList();
+	});
+
 });

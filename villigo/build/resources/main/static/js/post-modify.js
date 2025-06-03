@@ -4,7 +4,7 @@ function previewImages() {
     const previewContainer = document.getElementById('imagePreview');
 
     const maxFiles = 10;
-    const maxSizeMB = 1;
+    const maxSizeMB = 10;
 
     const files = Array.from(input.files);
     const attachedImgNum = document.querySelectorAll(".preview-container input[name='existingImageIds']").length;
@@ -35,15 +35,16 @@ function previewImages() {
                 // 이미지 생성
                 const img = document.createElement("img");
                 img.src = e.target.result;
-                img.style.width = "300px"
-                img.style.width = "300px"
+                img.style.width = "120px";
+                img.style.height = "120px";
+                img.style.objectFit = "contain";
                 img.classList.add("preview-image");
 
                 // 배지 생성
                 const badge = document.createElement("span");
                 badge.classList.add("position-absolute", "translate-middle", "badge", "rounded-pill", "bg-danger");
-                badge.style.top = "5%";
-                badge.style.left = "95%";
+                badge.style.top = "10%";
+                badge.style.left = "90%";
                 badge.textContent = "X";
                 
                 badge.addEventListener("click", function () {

@@ -82,65 +82,65 @@ function toggleCustomBrand() {
 		  	});
 	   }
 
-
-    function previewImages() {
-		const input = document.getElementById('uploadImage');
-		const previewContainer = document.getElementById('imagePreview');
-
-        const maxFiles = 10;
-        const maxSizeMB = 1;
-        
-        const files = Array.from(input.files);
-        
-        if(files.length > 10) {
-            alert(`이미지는 최대 ${maxFiles}개 첨부 가능합니다.`);
-            input.value = "";
-            return;
-        }
-        
-        for(let file of files) {
-            const fileSizeMB = file.size / (1024 * 1024);
-            if(fileSizeMB > maxSizeMB) {
-                alert(`이미지 ${file.name}의 크기가 너무 큽니다.\n (최대 1MB)`)
-                input.value = "";
-                return;
-            }
-        }
-		if (input.files.length > 0) {
-			for (let file of input.files) {
-				if (!file.type.startsWith("image/")) continue;
-
-				const reader = new FileReader();
-				reader.onload = function (e) {
-                    const wrapper = document.createElement("div");
-                    wrapper.classList.add("position-relative", "d-inline-block", "me-2");
-
-                    // 이미지 생성
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    img.style.width = "300px"
-                    img.style.width = "300px"
-                    img.classList.add("preview-image");
-
-                    // 배지 생성
-                    const badge = document.createElement("span");
-                    badge.classList.add("position-absolute", "translate-middle", "badge", "rounded-pill", "bg-danger");
-                    badge.style.top = "5%";
-                    badge.style.left = "95%";
-                    badge.textContent = "X";
-                    
-                    badge.addEventListener("click", function () {
-                        previewContainer.removeChild(wrapper);
-                    });
-                    
-                    wrapper.appendChild(img);
-                    wrapper.appendChild(badge);
-                    previewContainer.appendChild(wrapper);
-				};
-				reader.readAsDataURL(file);
-			}
-		}
-	}
+       function previewImages() {
+           const input = document.getElementById('uploadImage');
+           const previewContainer = document.getElementById('imagePreview');
+    
+           const maxFiles = 100;
+           const maxSizeMB = 10;
+           
+           const files = Array.from(input.files);
+           
+           if(files.length > 10) {
+               alert(`이미지는 최대 ${maxFiles}개 첨부 가능합니다.`);
+               input.value = "";
+               return;
+           }
+           
+           for(let file of files) {
+               const fileSizeMB = file.size / (1024 * 1024);
+               if(fileSizeMB > maxSizeMB) {
+                   alert(`이미지 ${file.name}의 크기가 너무 큽니다.\n (최대 1MB)`)
+                   input.value = "";
+                   return;
+               }
+           }
+           if (input.files.length > 0) {
+               for (let file of input.files) {
+                   if (!file.type.startsWith("image/")) continue;
+    
+                   const reader = new FileReader();
+                   reader.onload = function (e) {
+                       const wrapper = document.createElement("div");
+                       wrapper.classList.add("position-relative", "d-inline-block", "me-2");
+    
+                       // 이미지 생성
+                       const img = document.createElement("img");
+                       img.src = e.target.result;
+                       img.style.width = "120px"
+                       img.style.height = "120px"
+                       img.style.objectFit = "contain";
+                       img.classList.add("preview-image");
+    
+                       // 배지 생성
+                       const badge = document.createElement("span");
+                       badge.classList.add("position-absolute", "translate-middle", "badge", "rounded-pill", "bg-danger");
+                       badge.style.top = "10%";
+                       badge.style.left = "90%";
+                       badge.textContent = "X";
+                       
+                       badge.addEventListener("click", function () {
+                           previewContainer.removeChild(wrapper);
+                       });
+                       
+                       wrapper.appendChild(img);
+                       wrapper.appendChild(badge);
+                       previewContainer.appendChild(wrapper);
+                   };
+                   reader.readAsDataURL(file);
+               }
+           }
+       }
 
 	// 주소 검색 기능
 	document.getElementById("addressBtn").addEventListener('click', function() {
@@ -184,10 +184,10 @@ function toggleCustomBrand() {
 		} else if(postNameInput.value === "") {
 			alert('제목을 입력해주세요!');
 			return;
-		} else if(categoryNumInput.value == 1 && productName.value === "") {
+		} else if(categoryNumInput.value == 2 && productName.value === "") {
 			alert('상품명을 입력해주세요!');
 			return;
-		} else if(categoryNumInput.value == 2 && productName.value === "") {
+		} else if(categoryNumInput.value == 1 && productName.value === "") {
 			alert('차종을 입력해주세요!');
 			return;
 		} else if (brandSelect.value === "") {
@@ -202,7 +202,7 @@ function toggleCustomBrand() {
 		} else if(feeInput.value === "") {
 			alert('요금을 입력해주세요!');
 			return;
-		} else if(categoryNumInput.value == 2 && minRentalTimeInput.value === "") {
+		} else if(categoryNumInput.value == 1 && minRentalTimeInput.value === "") {
 			alert('최소시간을 입력해주세요!');
 			return;
 		} else if(fullAddressInput.value === "") {

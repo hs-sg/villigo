@@ -52,10 +52,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 calculatePrice();
             }
         });
-
-        // JAM 개수 설정
-        let userJam = 100;
-        document.getElementById("jam-count").textContent = userJam;
+        
+        // URL에서 productId 추출 (추가 정보 전송용)
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get("productId");
+        
+        // REST API로 상품의 요금을 불러옴
+        let pricePerMin = 0;
+        fetch(`./api/productfee?id=${productId}`)
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('상품 대여 요금 조회 결과 data: ', data);
+            pricePerMin = data;
+            // 이용 요금 표시 input 요소
+            const inputPricePerMin = document.getElementById("price-per-min");
+            inputPricePerMin.value = `${pricePerMin.toLocaleString()} JJAM / 분`;
+            console.log('요금 반영 완료 => pricePerMin=', pricePerMin);
+        })
+        .catch((error) => console.log(error));
 
         // 총 요금 계산
         function calculatePrice() {
@@ -65,14 +79,13 @@ document.addEventListener("DOMContentLoaded", function () {
             if (startTime && endTime) {
                 const start = new Date(`2000-01-01T${startTime}:00`);
                 const end = new Date(`2000-01-01T${endTime}:00`);
-                const diffHours = (end - start) / (1000 * 60 * 60);
-
-                if (diffHours > 0) {
-                    const pricePerHour = 5000;
-                    const totalPrice = diffHours * pricePerHour;
-                    document.getElementById("total-price").value = `${totalPrice.toLocaleString()} 쩸`;
+                const diffMinutes = (end - start) / (1000 * 60);
+                const inputTotalPrice = document.getElementById("total-price");
+                if (diffMinutes > 0) {
+                    const totalPrice = diffMinutes * pricePerMin;
+                    inputTotalPrice.value = `${totalPrice.toLocaleString()} JJAM`;
                 } else {
-                    document.getElementById("total-price").value = "0 쩸";
+                    document.getElementById("total-price").value = "0 JJAM";
                 }
             }
         }

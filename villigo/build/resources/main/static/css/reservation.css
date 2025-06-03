@@ -61,6 +61,16 @@ input:focus {
     width: 48%;
 }
 
+.show-price {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.show-price div {
+    width: 48%;
+}
+
 .note {
     font-size: 0.85rem;
     color: #888;

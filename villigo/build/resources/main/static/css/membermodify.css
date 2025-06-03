@@ -11,31 +11,59 @@
 /* 프로필 이미지 */
 .profile-image-wrapper {
   text-align: center;
-  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px; /* 명확한 크기 정의 */
+  height: 100px; /* 명확한 크기 정의 */
+  position: relative; /* edit-icon 위치를 위해 */
+  margin: 0 auto; /* 중앙 정렬 */
+  margin-bottom: 35px;
 }
 
 .profile-image-wrapper img {
-  width: 150px;
-  height: 150px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: cover; /* 이미지가 원형 프레임에 맞게 채워짐 */
+  object-position: center; /* 이미지 중앙 정렬 */
   border: 1px solid #ccc;
-  margin-bottom: 10px;
+  background-color: #fff; /* 이미지 배경 흰색으로 깔끔하게 */
 }
 
 .profile-image-wrapper input[type="file"] {
-  display: block;
-  margin: 0 auto;
-   display: none;
+  display: none;
 }
+
+/* 기본 이모지 스타일 */
+.emoji-frog {
+  font-size: 60px; /* 이모지 크기 */
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff; /* 배경 흰색으로 설정 */
+  line-height: normal; /* line-height 제거하여 중앙 정렬 개선 */
+}
+
+/* edit-icon 스타일 */
 .edit-icon {
   display: block;
   color: #000000;
   font-size: 14px;
   cursor: pointer;
   font-weight: 500;
-  font-weight:bold;
+  font-weight: bold;
+  bottom: 0;
+  right: 0;
+  background: #fff;
+  padding: 5px;
+  border-radius: 50%;
 }
+
 /* 2단 컬럼 */
 .two-column-form {
   display: flex;
@@ -139,6 +167,16 @@
   width: 100%;
 }
 
+.dropdown-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f3f3;
+}
+
 .option {
   padding: 8px 12px;
   cursor: pointer;
@@ -164,4 +202,20 @@
 
 .btn-save:hover {
   background-color: #543fe4;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .two-column-form {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .column {
+    min-width: 100%;
+  }
+  
+  .signup-form-container {
+    padding: 20px;
+  }
 }

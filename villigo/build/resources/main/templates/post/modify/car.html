@@ -27,15 +27,14 @@
                     </div>
 
                     <!-- 기존 미리보기 이미지 영역 -->
-                    <div class="preview-container" id="imagePreview" style="maxwidth:200px; maxheight:200px; display:flex; align-items: center;">
+                    <div class="preview-container" id="imagePreview">
                         <!-- TODO: 백엔드 연동 시 기존 이미지 표시 -->
                         <!-- <img th:each="image : ${car.images}" th:src="@{${image}}" class="preview-image" alt="기존 이미지"> -->
                         <th:block th:each="image : ${rentalImages}">
                             <div class="position-relative d-inline-block me-2">
-                                <img th:src="@{'/images/rentals/' + ${image.filePath}}" class="preview-image" alt="기존 이미지" 
-                                    style="max-width : 300px; max-height: 300px; object-fit: contain;">
-                                <span class="position-absolute translate-middle badge rounded-pill bg-danger delete-badge"
-                                    style="top: 5%; left:95%">X</span>
+                                <img th:src="${image.filePath}" class="preview-image" 
+                                style="width:120px; height:120px; object-fit:contain;" alt="기존 이미지" >
+                                <span class="position-absolute translate-middle badge rounded-pill bg-danger delete-badge" >X</span>
                                 <input type="hidden" name="existingImageIds" th:value="${image.id}" />
                             </div>
                         </th:block>
@@ -88,7 +87,7 @@
             <div class="section">
                 <div class="section-title">거래 희망 장소</div>
                 <div class="temp-box" th:object="${address}">
-                    <div id="map" style="width:786px; height:500px; z-index: 0;" 
+                    <div id="map" style="width: 775px; height: 500px; z-index: 0;" 
                     th:attr="data-lat=*{latitude}, data-lng=*{longitude}"></div>
                     <input th:value="*{fullAddress}" id="fullAddress" name="fullAddress" class="form-input" readonly/>
                     <button id="addressBtn" type="button" class="btn">주소검색</button>
@@ -111,7 +110,7 @@
 
     <!-- 다음 api -->
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=46b5efd1c8351c2b80a3ee8916942201"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=93ca72e78b0c65657f0cb8f3771d397a"></script>
     
     <!-- 공통 JS -->
     <th:block th:replace="~{/layout/fragments :: bootstrapJS}"></th:block>

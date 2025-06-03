@@ -47,17 +47,17 @@
 	            </div>
 	            <div class="chat-main" th:attr="data-chatroom-id=${chatRoomId}, data-user-id=${#authentication.principal.id}">
 	                <div class="chat-header">
-	                    <span id="chatUserName" th:text="${chatUserName}"></span>
+	                    <span id="chatUserName" th:text="${chatUserName}" style="font-weight: bold;"></span>
 	                    <div class="chat-header-buttons">
 	                        <button id="reportChat">🚨</button>
 	                    </div>
 	                </div>
-	                <div class="chat-messages">
-	                    <div id="noChatMessage" class="no-chat-message" style="display: none;">
-	                        <p>채팅이 없어요. 예약 신청을 해보세요!</p>
-	                    </div>
-	                    <div id="typingIndicator" class="typing-indicator" style="display: none;">상대방이 입력 중...</div>
-	                </div>
+					<div class="chat-messages">
+					    <div id="noChatMessage" class="no-chat-message" style="display: none;">
+					        <p>채팅이 없어요!😢 <br> 새로운 예약을 통해 채팅을 시작하세요!🔥</p>
+					    </div>
+					    <div id="typingIndicator" class="typing-indicator" style="display: none;">상대방이 입력 중...</div>
+					</div>
 	                <div class="chat-input">
 	                    <button class="attach-btn">
 	                        <!-- 이미지 첨부 아이콘 -->

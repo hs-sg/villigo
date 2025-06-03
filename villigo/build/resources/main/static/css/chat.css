@@ -7,6 +7,7 @@
     border: 1px solid #070707;
     overflow: hidden;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius:10px;
 }
 
 /* ✅ 왼쪽 채팅 목록 스타일 */
@@ -14,7 +15,7 @@
     display: flex;
     flex-direction: column;
     width: 28%;
-    background: #f5f5f5;
+    background: #ffffff;
     border-right: 1px solid #ddd;
     padding: 15px 10px 0 10px;
     height: 100%;
@@ -78,7 +79,7 @@
 #deleteContainer {
     display: flex;
     align-items: center;
-    padding: 10px 10px;
+    padding: 13.5px 10px;
     border-top: 1px solid #ddd;
     width: 100%;
     box-sizing: border-box;
@@ -118,6 +119,9 @@
     background: #fff;
     padding: 10px;
     border-bottom: 1px solid #ddd;
+}
+#chatUserName {
+    font-weight:700;
 }
 
 /* ✅ 채팅 메시지 영역 (길어지면 스크롤 가능) */
@@ -184,7 +188,7 @@ button {
 
 /* ✅ 전송 버튼 (회색 → 보라색) */
 .send-btn {
-    background: #d3b5f0;
+    background: #a69bf1;
     color: white;
     font-size: 16px;
     padding: 8px 12px;
@@ -194,7 +198,7 @@ button {
 }
 
 .send-btn.active {
-    background: #6a11cb;
+    background: #6d50e5;
     cursor: pointer;
     opacity: 1;
 }
@@ -314,7 +318,7 @@ button {
 }
 
 .message.sent .message-content {
-    background: #d3b5f0;
+    background:#a69bf1;
     color: white;
     border-radius: 10px 10px 0 10px;
     padding: 8px 12px; /* 패딩 추가 */
@@ -323,11 +327,12 @@ button {
 
 .message.received .message-content {
     background: #f1f1f1;
-    color: #333;
+    color: rgb(0, 0, 0);
     border-radius: 10px 10px 10px 0;
     padding: 8px 12px; /* 패딩 추가 */
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
     border: 1px solid #E5E5E5; /* 얇은 테두리 추가 */
+    
 }
 
 .message.sent,
@@ -519,7 +524,6 @@ button {
 }
 
 .chat-preview span {
-    flex: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -535,7 +539,9 @@ button {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    object-fit: cover;
+    object-fit: cover; /* 이미지가 원형 프레임에 맞게 채워짐 */
+    object-position: center; /* 이미지 중앙 정렬 */
+    display: block; /* 불필요한 여백 제거 */
 }
 
 .chat-avatar.emoji {
@@ -563,17 +569,14 @@ button {
 }
 
 .chat-item.active-room {
-    background-color: #e0ecff; /* 연한 파란색 배경 강조 */
-    border-left: 4px solid #007bff; /* 선택 느낌 강조 */
+    background-color: #e6e0ff; /* 연한 파란색 배경 강조 */
+    border-left: 4px solid #5400ff; /* 선택 느낌 강조 */
 }
 
 .chat-item input.chat-select-checkbox {
     cursor: pointer;
 }
 
-.chat-item.active-room {
-    background-color: #e0f0ff; /* 기존 강조 색 */
-}
 
 .chat-select-checkbox {
   margin-right: 6px;
@@ -582,13 +585,21 @@ button {
 }
 
 .unread-badge.small {
-    font-size: 10px;
-    padding: 1px 5px;
-    border-radius: 8px;
+    font-size: 12px;  /* 글자 크기 적당히 조정 */
+    padding: 3px 7px; /* 패딩 조정 */
+    border-radius: 50%; /* 원 모양 */
     font-weight: 500;
     background-color: #ff3c3c;
-    vertical-align: middle;
+    color: white;  /* 글자 색을 하얀색 */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 18px;  /* 원 크기 */
+    height: 18px;  /* 원 크기 */
+    text-align: center;  /* 텍스트를 가운데 정렬 */
 }
+
+
 
 .modal {
     display: none;
@@ -822,4 +833,55 @@ button {
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none; /* 아이콘이 클릭 이벤트를 방해하지 않도록 설정 */
+}
+
+.no-chat-message {
+    padding: 15px;
+    text-align: center;
+    color: #777;
+    display: none; /* 기본 숨김 */
+}
+
+.warning-box {
+  background-color: #fff8e1;
+  border: 1px solid #ffe8a1;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.warning-text {
+  color: #6b4d17;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.warning-text .warning-icon {
+  display: block;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.warning-text strong {
+  color: #d9534f;
+  font-weight: bold;
+}
+
+.warning-action button {
+  padding: 8px 20px;
+  font-size: 14px;
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.warning-action button:hover {
+  background-color: #c9302c;
 }

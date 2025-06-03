@@ -12,7 +12,7 @@
 				
 			<h2>상품 등록</h2>
 			<form id="uploadForm" action="/post/create/bag" method="post" enctype="multipart/form-data">
-				<input id="categoryNum" value="1" type="hidden">
+				<input id="categoryNum" value="2" type="hidden">
 				<!--  사진 등록 (미리보기) -->
 				<div class="section">
 					<div class="image-upload-container">
@@ -25,7 +25,7 @@
 						</div>
 					
 						<!--  미리보기 이미지 출력 영역 -->
-						<div class="preview-container" id="imagePreview" style="maxwidth:200px; maxheight:200px; display:flex; align-items: center;"></div>
+						<div class="preview-container" id="imagePreview"></div>
 					</div>
 				</div>
 
@@ -85,21 +85,23 @@
 				
 				<!--  거래 희망 장소 -->
 				<div class="section">
-					<div class="section-title">거래 희망 장소</div>
-					<div class="temp-box">
-						<input id="fullAddress" class="form-input" readonly name="fullAddress"/>
-						<button id="addressBtn" type="button" class="btn mt-2">주소검색</button>
-						<input id="zonecode" type="hidden" name="zonecode"/>
-						<input id="sido" type="hidden" name="sido"/>
-						<input id="sigungu" type="hidden" name="sigungu"/>
-						<input id="bname" type="hidden" name="bname"/>
-					</div>
-				</div>
+                  <div class="section-title">거래 희망 장소</div>
+                  <div class="temp-box">
+                    <div class="address-input-group">
+                      <button id="addressBtn" type="button" class="btn">주소검색</button>
+                      <input id="fullAddress" class="form-input" readonly name="fullAddress" />
+                    </div>
+                    <input id="zonecode" type="hidden" name="zonecode" />
+                    <input id="sido" type="hidden" name="sido" />
+                    <input id="sigungu" type="hidden" name="sigungu" />
+                    <input id="bname" type="hidden" name="bname" />
+                  </div>
+                </div>
 
 			
            		 <!--  하단 고정 버튼 -->
 				<div class="bottom-buttons">
-					<button id="submitBtn" class="submit-btn">등록하기</button>
+					<button type="submit" id="submitBtn" class="submit-btn">등록하기</button>
 				</div>
 			</form>
         </div>

@@ -78,19 +78,19 @@
 						<tr>
 						    <td class="filter-label">가격</td>
 						    <td class="filter-buttons">
-						        <button class="filter-btn price-btn" data-filter="price" data-value="0~20000">2만원 이하</button>
-						        <button class="filter-btn price-btn" data-filter="price" data-value="20000~40000">2만원 ~ 4만원</button>
-						        <button class="filter-btn price-btn" data-filter="price" data-value="40000~80000">4만원 ~ 8만원</button>
-						        <button class="filter-btn price-btn" data-filter="price" data-value="80000~10000000">8만원 이상</button>
+						        <button class="filter-btn price-btn" data-filter="price" data-value="~20000쨈" data-source="0,20000">2만쨈 이하</button>
+						        <button class="filter-btn price-btn" data-filter="price" data-value="20000쨈~40000쨈" data-source="20000,40000">2만쨈 ~ 4만쨈</button>
+						        <button class="filter-btn price-btn" data-filter="price" data-value="40000쨈~80000쨈" data-source="40000,80000">4만쨈 ~ 8만쨈</button>
+						        <button class="filter-btn price-btn" data-filter="price" data-value="80000쨈~" data-source="80000,10000000">8만쨈 이상</button>
 						
 						        <!-- 직접입력 -->
 								
 								<span class="unit-label">직접입력</span>
 								<input type="text" class="price-input" id="priceMin" placeholder="0">
-								<span class="unit-label">원</span>
+								<span class="unit-label">쨈</span>
 								<span class="unit-label">~</span>
 								<input type="text" class="price-input" id="priceMax" placeholder="100000">
-								<span class="unit-label">원</span>
+								<span class="unit-label">쨈</span>
 								<button id="priceSearchBtn" class="price-search-icon">
 								    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
 								         stroke-linecap="round" stroke-linejoin="round">
@@ -106,7 +106,7 @@
                             <td class="filter-label">컬러</td>
                             <td class="color-options">
                                 <th:block th:each="color : ${colors}">
-                                    <span class="color-circle" data-filter="color" th:data-value="${color.name}" 
+                                    <span class="filter-btn color-circle" data-filter="color" th:data-value="${color.name}" 
                                         th:style="'background: ' + ${color.colorNumber} + ';'" th:data-source="${color.colorNumber}"></span>
                                 </th:block>
                             </td>
@@ -115,7 +115,8 @@
                         <!-- 필터 전체보기 -->
                         <tr>
                             <td class="filter-label">필터 전체보기</td>
-                            <td class="selected-filters" id="selectedFilters"></td>
+                            <td><div class="selected-filters" id="selectedFilters"></div></td>
+                            <td class="refresh-div"><button class="btn" id="refresh-btn" style="font-size: 15px; white-space: nowrap;">필터 제거</button></td>
                            
                         </tr>
                     </table>
@@ -127,23 +128,27 @@
                 <div class="search-result">검색 결과</div>
                 <div id="searchResultDiv"><!-- 아이템 출력 div --></div>
             </div>
+            <div id="paginationDiv" ><!-- 필터링된 페이징 div --></div>
 
             <!-- 지도 보기 버튼 -->
-            <div class="map-button-section hidden" id="mapButtonSection">
-                <button class="map-btn" id="toggleMapBtn">지도 보기</button>
+            <div class="map-button-section hidden" id="mapButtonSection" style="z-index: 1000; position: fixed;">
+                
+                <div><button class="map-btn" id="toggleMapBtn" style="z-index: 1200">지도 보기</button></div>
             </div>
+
             
-            <div id="mapOverlay" class="map-overlay">
-                <div id="map" class="map-box"></div>
-                <button id="closeMapBtn" class="close-map">X</button>
+            <div id="mapOverlay" class="container" style="z-index: 750;">
+                <div id="map">
+                    <div class="map-box" id="map-box"></div>
+                </div>
             </div>
         </div>
     </main>
 
     <!-- 공통 JS -->
     <th:block th:replace="~{/layout/fragments :: bootstrapJS}"></th:block>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script th:src="@{/js/search.js}"></script>
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=46b5efd1c8351c2b80a3ee8916942201"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=93ca72e78b0c65657f0cb8f3771d397a"></script>
 </body>
 </html>

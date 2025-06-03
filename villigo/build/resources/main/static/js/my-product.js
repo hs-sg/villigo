@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const myProductDiv = document.getElementById("myProductDiv");
     const likeProductTab = document.getElementById("likeProductTab")
     const likeProductDiv = document.getElementById("likeProductDiv");
+    const divMoreViewMyProduct = document.getElementById("divMoreViewMyProduct");
+    const divMoreViewLike = document.getElementById("divMoreViewLike");
     let uri = '';
     axiosPaging(1, 0);
     myProductTab.addEventListener('click', () => {
@@ -49,32 +51,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     switch(product.rentalCategoryId) {
                         case 1:
                             html += `
-                            <a href="/post/details/bag?id=${product.id}">`
+                            <a href="/post/details/car?id=${product.id}">`
                             break;
                         case 2:
                             html += `
-                            <a href="/post/details/car?id=${product.id}">`
+                            <a href="/post/details/bag?id=${product.id}">`
                             break;
                     }
 			html += `
-                                <img src="/images/rentals/${product.filePath}" alt="상품 이미지">
+                                <img src="${product.filePath}" alt="상품 이미지">
 					        </a>
 							<p>`
                     switch(product.rentalCategoryId) {
                         case 1:
                             html += `
-                                <a href="/post/details/bag?id=${product.id}">`
+                                <a href="/post/details/car?id=${product.id}">`
                             break;
                         case 2:
                             html += `
-                                <a href="/post/details/car?id=${product.id}">`
+                                <a href="/post/details/bag?id=${product.id}">`
                             break;
                     }
             html += `
-                                    <strong>${product.productName}</strong>
+                                    <p class="product-name"><strong>${product.productName}</strong></p>
                                 </a>
 							</p>
-						    <p><strong>${product.fee}JJAM</strong></p>
+						    <p class="product-fee">${product.fee}JJAM</p>
 					    </div>
                     `;
         });
@@ -87,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(pageNumber < totalPages-1) {
             moreView(1, pageNumber, totalPages);
         } else {
-            deleteBtnMoreView();
+            deleteBtnMoreView(1);
         }
     }
 
@@ -104,25 +106,25 @@ document.addEventListener('DOMContentLoaded', () => {
             switch(product.rentalCategoryId) {
                 case 1:
                     html += `
-                    <a href="/post/details/bag?id=${product.id}">`
+                    <a href="/post/details/car?id=${product.id}">`
                     break;
                 case 2:
                     html += `
-                    <a href="/post/details/car?id=${product.id}">`
+                    <a href="/post/details/bag?id=${product.id}">`
                     break;
             }
 		    html += `
-                        <img src="/images/rentals/${product.filePath}" alt="찜상품">
+                        <img src="${product.filePath}" alt="찜상품">
 			        </a>
 			        <p>`
             switch(product.rentalCategoryId) {
                 case 1:
                     html += `
-                        <a href="/post/details/bag?id=${product.id})">`
+                        <a href="/post/details/car?id=${product.id}">`
                     break;
                 case 2:
                     html += `
-                        <a href="/post/details/car?id=${product.id})">`
+                        <a href="/post/details/bag?id=${product.id}">`
                     break;
             }
 			html += `
@@ -133,22 +135,84 @@ document.addEventListener('DOMContentLoaded', () => {
 			        <button class="delete-btn" style="display: none;" onclick="deleteCard(this, ${product.id})">삭제</button>
 			    </div>`
         });
-        likeProductDiv.innerHTML = html;
+        likeProductDiv.innerHTML += html;
+
+        console.log(data);
+        const pageNumber = data.pageable.pageNumber;
+        const totalPages = data.totalPages
+        console.log(pageNumber, totalPages);
+        if(pageNumber < totalPages-1) {
+            moreView(2, pageNumber, totalPages);
+        } else {
+            deleteBtnMoreView(2);
+        }
     }
+    
+    // 좋아요 기능
+        function toggleHeart(btn) {
+           const card = btn.closest(".product-card");
+           const deleteBtn = card.querySelector(".delete-btn");
+         
+           if (btn.classList.contains("active")) {
+             btn.classList.remove("active");
+             btn.textContent = "🤍"; // 하트 비활성
+             deleteBtn.style.display = "block"; // 삭제 버튼 표시
+           } else {
+             btn.classList.add("active");
+             btn.textContent = "❤️"; // 하트 활성
+             deleteBtn.style.display = "none";
+           }
+         }
+         
+         window.toggleHeart = toggleHeart;
+         
+         //  찜 카드 삭제
+         function deleteCard(btn, productId) {
+           const card = btn.closest(".product-card");
+           if (confirm("상품을 삭제하시겠습니까?")) {
+             fetch(`/api/like/no?id=${productId}`)
+                 .then((response) => response)
+                 .then((data) => {
+                     console.log(data);
+                     card.remove();
+                 })
+                 .catch(error => {
+                     console.error("좋아요 해제 실패:", error);
+                 });
+           }
+         }
+         window.deleteCard = deleteCard;
+
 
     function moreView(category, pageNumber, totalPages) {
-        const divMoreView = document.getElementById("divMoreView");
-        html = `
-                <button class="btn" id="btnMoreView">더보기(${pageNumber+1} / ${totalPages})</button>
-        `
-        divMoreView.innerHTML = html;
-        const btnMoreView = document.getElementById("btnMoreView");
-        btnMoreView.addEventListener('click', () => {
+        console.log("더보기 버튼 그리기");
+        switch(category) {
+            case 1:
+                html = `
+                <button class="moreViewBtn" id="btnMoreView">더보기(${pageNumber+1} / ${totalPages})</button>
+                `;
+                divMoreViewMyProduct.innerHTML = html;
+                break;
+            case 2:
+                html = `
+                <button class="moreViewBtn" id="btnMoreView">더보기(${pageNumber+1} / ${totalPages})</button>
+                `;
+                divMoreViewLike.innerHTML = html;
+        }
+
+        document.getElementById("btnMoreView").addEventListener('click', () => {
             axiosPaging(category, pageNumber+1)
         });
     }
 
-    function deleteBtnMoreView() {
-        document.getElementById("divMoreView").innerHTML = '';
+    function deleteBtnMoreView(category) {
+        switch(category) {
+            case 1:
+                document.getElementById("divMoreViewMyProduct").innerHTML = '';
+                break;
+            case 2:
+                document.getElementById("divMoreViewLike").innerHTML = '';
+                break;
+        }
     }
 });

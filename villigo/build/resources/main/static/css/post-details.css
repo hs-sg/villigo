@@ -92,13 +92,39 @@ h2 {
 }
 
 /*  유저 아바타 (오른쪽 배치) */
-.user-avatar {
+#profileImage {
     width: 52px;
     height: 52px;
     border-radius: 50%;
     border: 1px solid #ddd;
      
 }
+
+.emoji-frog {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px; /* 이모지 크기 조정 */
+    background-color: #fff; /* 이미지 배경이 흰색일 경우 대비 */
+    text-decoration: none;     /* 밑줄 제거 */
+    color: white;            /* 파란색 제거 (부모 글자색 상속) */
+}
+
+a .emoji-frog {
+    text-decoration: none;
+    color: white;
+}
+
+a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+
 
 /*  유저 정보 텍스트 (왼쪽 정렬) */
 .user-details {
@@ -122,15 +148,18 @@ h2 {
 .image-container {
     display: flex;
     justify-content: center;
+    align-items: center;
+    width: 570px;
+    height: 570px;
+    margin: 0 auto;
 }
 
 .slide-image {
     width: 100%;
-    max-width: 600px;
-    height: auto;
-    display: none;
+    height: 100%;
     border-radius: 10px;
     object-fit: cover;
+    object-position: center;
 }
 
 .prev-btn, .next-btn {
@@ -197,7 +226,6 @@ h2 {
 
 /* ✅ 요금 & 거래 희망 장소 박스 */
 .temp-box {
-    background: #f2f2f2;
     padding: 15px;
     text-align: center;
     border-radius: 5px;

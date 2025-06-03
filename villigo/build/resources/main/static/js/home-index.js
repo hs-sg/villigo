@@ -1,63 +1,85 @@
+
 // -------------------------
 // 브랜드 데이터
 // -------------------------
-const brandData = {
+
+// 브랜드 데이터 불러오기 완료
+/*const brandData = {
   car: [
-    { name: 'BMW', img: '/images/testcar3.jfif' },
-    { name: '벤츠', img: '/images/testcar.jfif' },
-    { name: '현대', img: '/images/testcar.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
-    { name: '기아', img: '/images/testcar2.jfif' },
+    { name: 'BMW', img: '/images/test/Alfa-Romeo.png' },
+    { name: '벤츠', img: '/images/test/Aston_Martin.png' },
+    { name: '현대', img: '/images/test/Jaguar.png' },
+    { name: '기아', img: '/images/test/Koenigsegg.png' },
+    { name: '기아', img: '/images/test/Lagonda.png' },
+    { name: '기아', img: '/images/test/Maybach.png' },
+    { name: '기아', img: '/images/test/Mercedes.png' },
+    { name: '기아', img: '/images/test/tesla.png' },
+	{ name: '현대', img: '/images/test/Jaguar.png' },
+    { name: 'BMW', img: '/images/test/Alfa-Romeo.png' },
+    { name: '벤츠', img: '/images/test/Aston_Martin.png' },
+    { name: '현대', img: '/images/test/Jaguar.png' },
+    { name: '기아', img: '/images/test/Koenigsegg.png' },
+    { name: '기아', img: '/images/test/Lagonda.png' },
+    { name: '기아', img: '/images/test/Maybach.png' },
+    { name: '기아', img: '/images/test/Mercedes.png' },
+    { name: '기아', img: '/images/test/tesla.png' },
+    { name: 'BMW', img: '/images/test/Alfa-Romeo.png' },
+    { name: '벤츠', img: '/images/test/Aston_Martin.png' },
+    { name: '현대', img: '/images/test/Jaguar.png' },
+    { name: '기아', img: '/images/test/Koenigsegg.png' },
+    { name: '기아', img: '/images/test/Lagonda.png' },
+    { name: '기아', img: '/images/test/Maybach.png' },
+    { name: '기아', img: '/images/test/Mercedes.png' },
+    { name: '기아', img: '/images/test/tesla.png' }
+   
     
   ],
   bag: [
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '루이비통', img: '/images/testbag2.jfif' },
-    { name: '프라다', img: '/images/testbag.jfif' },
-    { name: '프라다', img: '/images/testbag.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' },
-    { name: '샤넬', img: '/images/testbag3.jfif' }
+    { name: '샤넬', img: '/images/test/Celine.png' },
+    { name: '루이비통', img: '/images/test/chanel.png' },
+    { name: '프라다', img: '/images/test/gucci.png' },
+    { name: '프라다', img: '/images/test/hermes.png' },
+    { name: '샤넬', img: '/images/test/louisvuitton.png' },
+    { name: '샤넬', img: '/images/test/ysl.png' },
+    { name: '샤넬', img: '/images/test/Celine.png' },
+    { name: '루이비통', img: '/images/test/chanel.png' },
+    { name: '프라다', img: '/images/test/gucci.png' },
+    { name: '프라다', img: '/images/test/hermes.png' },
+    { name: '샤넬', img: '/images/test/louisvuitton.png' },
+    { name: '샤넬', img: '/images/test/ysl.png' },
+    { name: '샤넬', img: '/images/test/Celine.png' },
+    { name: '루이비통', img: '/images/test/chanel.png' },
+    { name: '프라다', img: '/images/test/gucci.png' },
+    { name: '프라다', img: '/images/test/hermes.png' },
+    { name: '샤넬', img: '/images/test/louisvuitton.png' },
+    { name: '샤넬', img: '/images/test/ysl.png' }
+  
   ]
-};
+}; */
 
-const sampleProducts = [
+/*const sampleProducts = [
   { name: '샘플 상품 A', price: '270,000원~', img: '/images/testbag2.jfif' },
   { name: '샘플 상품 B', price: '308,500원~', img: '/images/testbag3.jfif' },
   { name: '샘플 상품 C', price: '160,600원~', img: '/images/testbag.jfif' },
+  { name: '샘플 상품 D', price: '160,600원~', img: '/images/testbag.jfif' },
+  { name: '샘플 상품 B', price: '308,500원~', img: '/images/testbag3.jfif' },
+  { name: '샘플 상품 C', price: '160,600원~', img: '/images/testbag.jfif' },
+  { name: '샘플 상품 D', price: '160,600원~', img: '/images/testbag.jfif' },
+  { name: '샘플 상품 B', price: '308,500원~', img: '/images/testbag3.jfif' },
+  { name: '샘플 상품 C', price: '160,600원~', img: '/images/testbag.jfif' },
+  { name: '샘플 상품 D', price: '160,600원~', img: '/images/testbag.jfif' },
+  { name: '샘플 상품 B', price: '308,500원~', img: '/images/testbag3.jfif' },
+  { name: '샘플 상품 C', price: '160,600원~', img: '/images/testbag.jfif' },
   { name: '샘플 상품 D', price: '160,600원~', img: '/images/testbag.jfif' }
-];
+];*/
+
+const container = document.getElementById("homeProductsData");
+const homeProducts  = JSON.parse(container.dataset.homeproducts);
+console.log(homeProducts);
+const recentProducts = homeProducts.recent;
+const themeProducts = homeProducts.theme;
+const regionProducts = homeProducts.region;
+let selectedFilters = {};
 
 // -------------------------
 // 브랜드 슬라이더 로직
@@ -65,14 +87,36 @@ const sampleProducts = [
 let currentBrandPage = 0;
 const brandsPerPage = 8;
 
-function selectCategory(cat) {
+// 브랜드 데이터 불러오기
+const bData = document.getElementById("brandData");
+const bagbrand = JSON.parse(bData.dataset.bagbrands);
+const carbrand = JSON.parse(bData.dataset.carbrands);
+const brandData = {
+    bag : bagbrand.map(brand => ({
+        id: brand.id,
+        name: brand.name,
+        img: brand.imagePath,
+    })),
+    car : carbrand.map(brand => ({
+        id: brand.id,
+        name: brand.name,
+        img: brand.imagePath,
+    }))
+};
+
+// btn 매개변수 추가
+function selectCategory(cat, btn = null) {
   const emblemBox = document.getElementById('brandEmblems');
-  // 전체 데이터 저장
   emblemBox.dataset.category = cat;
-  // 현재 페이지 초기화
   currentBrandPage = 0;
-  // 브랜드 뷰 업데이트
   updateBrandView();
+
+  // 버튼 강조 효과 처리
+  if (btn) {
+    const allButtons = document.querySelectorAll(".category-btn");
+    allButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  }
 }
 
 function updateBrandView() {
@@ -87,15 +131,20 @@ function updateBrandView() {
   const endIndex = startIndex + brandsPerPage;
   const currentPageBrands = brandData[cat].slice(startIndex, endIndex);
   
-  // 균등하게 배치
-  currentPageBrands.forEach(b => {
-    emblemBox.innerHTML += `
-      <div class="brand-item" onclick="alert('${b.name} 브랜드가 선택되어있는 검색페이지로 이동')">
-        <img src="${b.img}" alt="${b.name}">
-        <div>${b.name}</div>
-      </div>
-    `;
-  });
+  // 브랜드 렌더링 및 클릭 이벤트 추가
+    currentPageBrands.forEach(b => {
+      emblemBox.innerHTML += `
+        <div class="brand-item" onclick="selectBrand('${b.name}')">
+          <img src="${b.img}" alt="${b.name}">
+          <div>${b.name}</div>
+        </div>
+      `;
+    });
+}
+
+function selectBrand(brandName) {
+  const url = `/search?brand=${encodeURIComponent(brandName)}`;
+  window.location.href = url;
 }
 
 function scrollBrand(direction, event) {
@@ -119,25 +168,6 @@ function scrollBrand(direction, event) {
   
   // 뷰 업데이트
   updateBrandView();
-}
-
-
-
-// -------------------------
-// 상품 카드 렌더링
-// -------------------------
-function loadProducts(sectionId) {
-  const box = document.getElementById(sectionId);
-  sampleProducts.forEach(p => {
-    box.innerHTML += `
-      <div class="product-card">
-        <img src="${p.img}" alt="${p.name}">
-		<div class="mt-1">
-		    <div class="product-name">${p.name}</div>
-		    <div class="product-price">${p.price}</div>
-		  </div>
-    `;
-  });
 }
 
 // -------------------------
@@ -240,15 +270,208 @@ function toggleSlider() {
 
 toggleBtn.onclick = toggleSlider;
 
+// 상단 공지
+function startNoticeSlider() {
+  const messages = [
+    "빌리고에 오신 걸 환영합니다.",
+    "봄맞이 JJAM 최대 20% 충전 혜택을 받아보세요!",
+	"슈퍼카와 명품백을 합리적인 가격에 이용해 보세요.",
+    "궁금하신 점은 오른쪽 하단 빌리 챗을 이용해 보세요.",
+    
+  ];
+
+  const slideContainer = document.getElementById("noticeSlide");
+
+  // 메시지 DOM 생성
+  messages.forEach(msg => {
+    const div = document.createElement("div");
+    div.className = "notice-text";
+    div.textContent = msg;
+    slideContainer.appendChild(div);
+  });
+
+  // 클론 추가 (첫 번째 메시지를 복제해서 맨 뒤에 붙임)
+  const firstClone = slideContainer.children[0].cloneNode(true);
+  slideContainer.appendChild(firstClone);
+
+  const messageCount = messages.length;
+  let current = 0;
+  const itemHeight = 24;
+  const intervalTime = 3000;
+  let isResetting = false;
+
+  setInterval(() => {
+    if (isResetting) return;
+
+    current++;
+    slideContainer.style.transition = "transform 0.7s ease-in-out";
+    slideContainer.style.transform = `translateY(-${current * itemHeight}px)`;
+
+    // 마지막 클론(복제 메시지)까지 도달했을 때
+    if (current === messageCount) {
+      isResetting = true;
+      setTimeout(() => {
+        // 트랜지션 제거하고 바로 첫 번째로 위치 초기화
+        slideContainer.style.transition = "none";
+        slideContainer.style.transform = `translateY(0)`;
+        current = 0;
+
+        // 다음 루프를 위해 살짝 대기
+        setTimeout(() => {
+          isResetting = false;
+        }, 50);
+      }, 500); // 트랜지션이 끝나고 나서 리셋
+    }
+  }, intervalTime);
+}
+// -------------------------
+// 상품 카드 렌더링 + 슬라이더 관리
+// -------------------------
+const itemsPerSlide = 4;
+const sliderStates = {}; // 각 슬라이더 상태 저장
+
+function loadProducts(sectionId, products) {
+  const container = document.getElementById(sectionId);
+  container.innerHTML = '';
+  console.log(container.getAttribute(sectionId));
+  
+  // 전체 상품 그리드인 경우 모든 상품 로드
+  if (sectionId === 'AllProducts') {
+    products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card grid-card';
+      card.innerHTML = `<img src="${p.img}" alt="${p.name}"><div class="mt-1"><div class="product-name">${p.name}</div><div class="product-price">${p.price} JJAM</div></div>`;
+      container.appendChild(card);
+    });
+  } 
+  // 슬라이더인 경우 슬라이더 형식으로 로드
+  else {
+    // 슬라이드 페이지 생성
+    const totalSlides = Math.ceil(products.length / itemsPerSlide);
+    
+    for (let i = 0; i < totalSlides; i++) {
+      const slideWrapper = document.createElement('div');
+      slideWrapper.className = 'slide-wrapper';
+      
+      // 각 슬라이드 페이지에 4개의 상품 추가
+      const startIdx = i * itemsPerSlide;
+      const endIdx = Math.min(startIdx + itemsPerSlide, products.length);
+      
+      for (let j = startIdx; j < endIdx; j++) {
+        const p = products[j];
+        console.log(p.filePath, p.postName, p.fee, p.rentalCategoryId);
+        let html = ''
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        switch(p.rentalCategoryId) {
+            case 1:
+                html += `<a href="/post/details/car?id=${p.id}">`
+                break;
+            case 2:
+                html += `<a href="/post/details/bag?id=${p.id}">`
+                break;
+        }
+        html += `
+                <img src="${p.filePath}" alt="${p.postName}"></a>
+                    <div class="mt-1">
+                    <div class="product-name">${p.postName}</div>
+                    <div class="product-price">${p.fee} JJAM</div>
+            </div>
+            `;
+        card.innerHTML = html;
+        slideWrapper.appendChild(card);
+      }
+      
+      container.appendChild(slideWrapper);
+    }
+    
+    // 슬라이더 상태 초기화
+    initializeSlider(sectionId);
+  }
+}
+
+function initializeSlider(sectionId) {
+  const container = document.getElementById(sectionId);
+  const slideWrappers = container.querySelectorAll('.slide-wrapper');
+  const slideCount = slideWrappers.length;
+
+  sliderStates[sectionId] = { currentIndex: 0, totalPages: slideCount };
+
+  // 슬라이드 컨테이너의 width를 100%로 설정
+  container.style.width = '100%';
+
+  // 각 슬라이드의 flex 설정
+  slideWrappers.forEach(wrapper => {
+    // 각 슬라이드의 너비를 flex로 처리
+    wrapper.style.flex = '0 0 100%'; // 슬라이드의 너비를 100%로 설정
+  });
+
+  // 슬라이드 컨테이너에서 transform 초기화
+  container.style.transform = 'translateX(0)';
+}
+
+function scrollProducts(sectionId, direction) {
+  const container = document.getElementById(sectionId);
+  const state = sliderStates[sectionId];
+  if (!state) return;
+
+  state.currentIndex = Math.max(0, Math.min(state.totalPages - 1, state.currentIndex + direction));
+  container.style.transform = `translateX(-${state.currentIndex * 100}%)`;
+}
+
+/* function loadMoreAllProducts() {
+  const container = document.getElementById("AllProducts");
+  const limitedClass = container.classList.contains("limited");
+  
+  // 현재 'limited' 클래스가 있다면 3줄 추가
+  if (limitedClass) {
+    container.classList.remove("limited");
+    
+    // 'limited' 클래스를 제거하고 더 많은 상품을 표시
+    const productItems = container.querySelectorAll('.product-card');
+    const totalItems = sampleProducts.length;
+    const itemsPerLine = 4; // 한 줄에 4개씩
+    const currentRows = Math.ceil(productItems.length / itemsPerLine); // 현재까지 표시된 줄 수
+    
+    // 3줄씩 추가
+    const startIdx = currentRows * 3 * itemsPerLine; // 3줄 * 4개 상품씩
+    const endIdx = Math.min(startIdx + 3 * itemsPerLine, totalItems); // 상품 리스트 끝까지
+
+    // 상품 카드 추가
+    for (let i = startIdx; i < endIdx; i++) {
+      const p = sampleProducts[i];
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `<img src="${p.img}" alt="${p.name}"><div class="mt-1"><div class="product-name">${p.name}</div><div class="product-price">${p.price}</div></div>`;
+      container.appendChild(card);
+    }
+    
+    // 더 이상 추가할 상품이 없다면 버튼 숨기기
+    if (endIdx === totalItems) {
+      document.querySelector(".more-btn-wrap").style.display = "none";
+    }
+  }
+} */
+
+function goSearchPage(brandId) {
+    window.location.href = "http://localhost:8080/search?brandId=" + brandId;
+}
+
+
+
+
 // -------------------------
 // 초기 실행 + 전역 등록
 // -------------------------
 selectCategory('car');
-loadProducts('recommendProducts');
-loadProducts('topLocalProducts');
-loadProducts('newProducts');
-loadProducts('AllProducts');
+loadProducts('recommendProducts', themeProducts);
+loadProducts('topLocalProducts', regionProducts);
+loadProducts('newProducts', recentProducts);
+//loadProducts('AllProducts', recentProducts);
 renderSlide(currentSlide);
 startSlider();
 window.scrollBrand = scrollBrand;
 window.selectCategory = selectCategory;
+startNoticeSlider();
+window.scrollProducts = scrollProducts;
+//window.loadMoreAllProducts = loadMoreAllProducts;
