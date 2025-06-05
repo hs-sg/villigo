@@ -40,47 +40,54 @@ public class HomeController {
 	@GetMapping("/")
 	public String home(@CurrentUser User user, Model model) throws JsonProcessingException {
 		log.info("home()");
-		Map<String, List<ProductImageMergeDto>> homeProducts = new HashMap<>();
-		
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		log.info("authentication: ", authentication);
-		Boolean a = authentication.isAuthenticated();
-		log.info("authentication.isAuthenticated(): ", a.toString());
+		System.out.println("✅ / 요청 진입됨");
+		try {
+			Map<String, List<ProductImageMergeDto>> homeProducts = new HashMap<>();
+			
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			log.info("authentication: ", authentication);
+			Boolean a = authentication.isAuthenticated();
+			log.info("authentication.isAuthenticated(): ", a.toString());
 
-        if (user != null) {
-            Object principal = authentication.getPrincipal();            
-  
-            log.info("user: ", user);
-            user = (User) principal; // 캐스팅
-            log.info("user: ", user);
-            String username = user.getUsername(); // User 객체의 id 반환
-            Long themeId = user.getTheme().getId();
-            String region = user.getRegion();
-            
-            log.info(username, themeId, region);
-            log.info(themeId.toString());
-            log.info(region);
+	        if (user != null) {
+	            Object principal = authentication.getPrincipal();            
+	  
+	            log.info("user: ", user);
+	            user = (User) principal; // 캐스팅
+	            log.info("user: ", user);
+	            String username = user.getUsername(); // User 객체의 id 반환
+	            Long themeId = user.getTheme().getId();
+	            String region = user.getRegion();
+	            
+	            log.info(username, themeId, region);
+	            log.info(themeId.toString());
+	            log.info(region);
 
-			homeProducts = prodService.readHomeProducts(themeId, region);
-        } else {
-        	homeProducts = prodService.readHomeProducts(1L, "서울");
-        	log.info("로그인 안한 경우");
-        }
-        
-        log.info("result = {}", homeProducts.toString());
-		List<BrandReadDto> carBrands = prodService.readBrandDto(1L);
-		List<BrandReadDto> bagBrands = prodService.readBrandDto(2L);
-        
-	    ObjectMapper mapper = new ObjectMapper();
-	    String bagBrandsJson = mapper.writeValueAsString(bagBrands);
-	    String carBrandsJson = mapper.writeValueAsString(carBrands);
-	    String homeProductsJson = mapper.writeValueAsString(homeProducts);
-	    
-        
-		model.addAttribute("bagBrandsJson", bagBrandsJson);
-		model.addAttribute("carBrandsJson", carBrandsJson);
-		model.addAttribute("homeProductsJson", homeProductsJson);
-        return "index";
+				homeProducts = prodService.readHomeProducts(themeId, region);
+	        } else {
+	        	homeProducts = prodService.readHomeProducts(1L, "서울");
+	        	log.info("로그인 안한 경우");
+	        }
+	        
+	        log.info("result = {}", homeProducts.toString());
+			List<BrandReadDto> carBrands = prodService.readBrandDto(1L);
+			List<BrandReadDto> bagBrands = prodService.readBrandDto(2L);
+	        
+		    ObjectMapper mapper = new ObjectMapper();
+		    String bagBrandsJson = mapper.writeValueAsString(bagBrands);
+		    String carBrandsJson = mapper.writeValueAsString(carBrands);
+		    String homeProductsJson = mapper.writeValueAsString(homeProducts);
+		    
+	        
+			model.addAttribute("bagBrandsJson", bagBrandsJson);
+			model.addAttribute("carBrandsJson", carBrandsJson);
+			model.addAttribute("homeProductsJson", homeProductsJson);
+	        return "index";
+		} catch (Exception e) {
+	        System.out.println("❌ / 응답 중 예외 발생: " + e.getMessage());
+	        e.printStackTrace();
+	        return "error";
+		}
 	}
 	
     @GetMapping("/home")
