@@ -31,9 +31,6 @@ public class ChatImageService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final S3TransferService s3TransferService;
-    
-    @Value("${file.upload-dir}")
-    private String uploadDir;
 
     public String saveImage(MultipartFile file, Long roomId, Long senderId) {
         try {

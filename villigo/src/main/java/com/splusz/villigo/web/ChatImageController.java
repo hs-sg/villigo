@@ -29,9 +29,6 @@ public class ChatImageController {
 
     private final ChatImageService chatImageService;
 
-    @Value("${file.upload-dir}") // 설정 파일에서 이미지 저장 경로 가져오기
-    private String uploadDir;
-
     // 이미지 업로드 API
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(
@@ -61,32 +58,32 @@ public class ChatImageController {
 
 
     // 이미지 가져오기 API
-    @GetMapping("/images/{filename}")
-    public ResponseEntity<Resource> getImage(@PathVariable(name = "filename") String filename) {
-        try {
-            // URL 디코딩
-            String decodedFilename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
-            Path filePath = Paths.get(uploadDir).resolve(decodedFilename).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-
-            // 파일 존재 여부 확인
-            if (!resource.exists() || !resource.isReadable()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(null);
-            }
-
-            // MIME 타입 설정
-            String contentType = Files.probeContentType(filePath);
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .body(resource);
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
+//    @GetMapping("/images/{filename}")
+//    public ResponseEntity<Resource> getImage(@PathVariable(name = "filename") String filename) {
+//        try {
+//            // URL 디코딩
+//            String decodedFilename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+//            Path filePath = Paths.get(uploadDir).resolve(decodedFilename).normalize();
+//            Resource resource = new UrlResource(filePath.toUri());
+//
+//            // 파일 존재 여부 확인
+//            if (!resource.exists() || !resource.isReadable()) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                        .body(null);
+//            }
+//
+//            // MIME 타입 설정
+//            String contentType = Files.probeContentType(filePath);
+//            if (contentType == null) {
+//                contentType = "application/octet-stream";
+//            }
+//
+//            return ResponseEntity.ok()
+//                    .contentType(MediaType.parseMediaType(contentType))
+//                    .body(resource);
+//        } catch (IOException e) {
+//            return ResponseEntity.internalServerError().build();
+//        }
+//    }
 
 }
