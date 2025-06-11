@@ -11,4 +11,4 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 @139
 EXPOSE 8080
-ENTRYPOINT ["java", "-Xmx96m", "-Xms64m", "-XX:MaxMetaspaceSize=64m", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Xmx96m", "-Xms64m", "-XX:MaxMetaspaceSize=64m", "-verbose:gc", "-jar", "app.jar"]
