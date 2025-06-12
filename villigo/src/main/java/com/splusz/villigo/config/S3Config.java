@@ -1,13 +1,10 @@
 package com.splusz.villigo.config;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import jakarta.annotation.PostConstruct;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -34,5 +31,10 @@ public class S3Config {
                 .region(Region.AP_NORTHEAST_2)
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
+    }
+    
+    @PostConstruct
+    public void checkDatasourceUrl() {
+        System.out.println("📡 JDBC URL = " + System.getenv("SUPABASE_URL"));
     }
 }
