@@ -10,4 +10,4 @@ FROM eclipse-temurin:21-jdk
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "env | grep SUPABASE && java -Xmx768m -Xms384m -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Xmx768m -Xms384m -jar app.jar"]
