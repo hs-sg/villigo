@@ -11,6 +11,8 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["sh", "-c", "\
+  echo '==== ENV CHECK ====' && \
+  echo $SUPABASE_URL && \
   java -Xmx768m -Xms384m \
   -Dspring.datasource.url=$SUPABASE_URL \
   -Dspring.datasource.username=$SUPABASE_USERNAME \
