@@ -35,6 +35,6 @@ public class S3Config {
     
     @PostConstruct
     public void checkDatasourceUrl() {
-        System.out.println("📡 JDBC URL = " + System.getenv("SUPABASE_URL"));
+        System.out.println("THIS IS YOUR SUPABASE_URL = " + System.getenv("SUPABASE_URL"));
     }
 }
