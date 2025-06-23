@@ -9,9 +9,9 @@ FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
 # 환경변수를 받을 준비
-ENV SUPABASE_URL=""
-ENV SUPABASE_USERNAME=""
-ENV SUPABASE_PASSWORD=""
+ENV SUPABASE_URL
+ENV SUPABASE_USERNAME
+ENV SUPABASE_PASSWORD
 
 # JAR 및 entrypoint.sh 복사
 COPY --from=builder /app/build/libs/*.jar app.jar
