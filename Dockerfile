@@ -11,10 +11,10 @@ WORKDIR /app
 
 # 환경변수용 엔트리포인트 스크립트 추가
 COPY --from=builder /app/build/libs/*.jar app.jar
-COPY entrypoint.sh .
-RUN chmod +x entrypoint.sh
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 8080
 
 # entrypoint를 스크립트로 설정
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
