@@ -8,23 +8,17 @@ RUN ./gradlew clean build -x test -x check
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
-# Railway에서 전달할 환경변수들을 명시적으로 ARG로 선언
-ARG SUPABASE_URL
-ARG SUPABASE_USERNAME
-ARG SUPABASE_PASSWORD
+# 환경변수를 받을 준비
+ENV SUPABASE_URL=""
+ENV SUPABASE_USERNAME=""
+ENV SUPABASE_PASSWORD=""
 
-# ENV로 변환
-ENV SPRING_DATASOURCE_URL=$SUPABASE_URL
-ENV SPRING_DATASOURCE_USERNAME=$SUPABASE_USERNAME
-ENV SPRING_DATASOURCE_PASSWORD=$SUPABASE_PASSWORD
-
+# JAR 및 entrypoint.sh 복사
 COPY --from=builder /app/build/libs/*.jar app.jar
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
 EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "\
-  echo '==== ENV CHECK ====' && \
-  echo $SUPABASE_URL && \
-  java -Xmx768m -Xms384m \
-  -Dspring.datasource.url=$SUPABASE_URL \
-  -Dspring.datasource.username=$SUPABASE_USERNAME \
-  -Dspring.datasource.password=$SUPABASE_PASSWORD \
-  -jar app.jar"]
+
+# entrypoint를 스크립트로 설정
+ENTRYPOINT ["./entrypoint.sh"]
