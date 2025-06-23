@@ -2,13 +2,14 @@
 FROM gradle:8.7.0-jdk21 AS builder
 WORKDIR /app
 COPY . .
-RUN chmod +x gradlew && ./gradlew clean build -x test -x check
+RUN chmod +x gradlew
+RUN ./gradlew clean build -x test -x check
 
 # 런타임 단계
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
-# JAR 및 entrypoint.sh 복사
+# 환경변수용 엔트리포인트 스크립트 추가
 COPY --from=builder /app/build/libs/*.jar app.jar
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
