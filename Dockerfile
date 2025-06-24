@@ -13,7 +13,4 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8080
 
 # shell form 사용
-CMD ["/bin/sh", "-c", "java -Dspring.datasource.url=\"$SUPABASE_URL\" \
-  -Dspring.datasource.username=\"$SUPABASE_USERNAME\" \
-  -Dspring.datasource.password=\"$SUPABASE_PASSWORD\" \
-  -jar app.jar"]
+CMD ["/bin/sh", "-c", "java -jar app.jar"]
