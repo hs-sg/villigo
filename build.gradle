@@ -81,7 +81,15 @@ def querydslDir = "$buildDir/generated/querydsl"
 
 // 소스 폴더(directory)를 빌드 패스에 추가.
 sourceSets {
-    main.java.srcDirs += [ querydslDir ]
+//    main.java.srcDirs += [ querydslDir ]
+    main {
+        java {
+            srcDirs += [querydslDir]
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
 }
 
 // Gradle task 중에서 자바 컴파일(빌드) 작업 구성 - 자동 생성된 폴더를 컴파일.

@@ -33,8 +33,8 @@ public class S3Config {
                 .build();
     }
     
-    @PostConstruct
-    public void checkDatasourceUrl() {
-        System.out.println("THIS IS YOUR SUPABASE_URL = " + System.getenv("SUPABASE_URL"));
-    }
+//    @PostConstruct
+//    public void checkDatasourceUrl() {
+//        System.out.println("THIS IS YOUR SUPABASE_URL = " + System.getenv("SUPABASE_URL"));
+//    }
 }
