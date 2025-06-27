@@ -1,2 +1,6 @@
 /bin/
 .env
+/build/
+*.jar
+.gradle/
+/out/
