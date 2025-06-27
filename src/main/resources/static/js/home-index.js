@@ -175,7 +175,7 @@ function scrollBrand(direction, event) {
 // -------------------------
 const slides = [
   {
-    img: "/images/cherryblossom1.png",
+    img: "/images/cherryblossom1.PNG",
     title: "🌸 봄맞이 JJAM 추가 혜택",
     subtitle: "최대 20% 보너스!",
     link: "/jjam/shop",
