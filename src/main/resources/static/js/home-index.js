@@ -1,78 +1,3 @@
-
-// -------------------------
-// 브랜드 데이터
-// -------------------------
-
-// 브랜드 데이터 불러오기 완료
-/*const brandData = {
-  car: [
-    { name: 'BMW', img: '/images/test/Alfa-Romeo.png' },
-    { name: '벤츠', img: '/images/test/Aston_Martin.png' },
-    { name: '현대', img: '/images/test/Jaguar.png' },
-    { name: '기아', img: '/images/test/Koenigsegg.png' },
-    { name: '기아', img: '/images/test/Lagonda.png' },
-    { name: '기아', img: '/images/test/Maybach.png' },
-    { name: '기아', img: '/images/test/Mercedes.png' },
-    { name: '기아', img: '/images/test/tesla.png' },
-	{ name: '현대', img: '/images/test/Jaguar.png' },
-    { name: 'BMW', img: '/images/test/Alfa-Romeo.png' },
-    { name: '벤츠', img: '/images/test/Aston_Martin.png' },
-    { name: '현대', img: '/images/test/Jaguar.png' },
-    { name: '기아', img: '/images/test/Koenigsegg.png' },
-    { name: '기아', img: '/images/test/Lagonda.png' },
-    { name: '기아', img: '/images/test/Maybach.png' },
-    { name: '기아', img: '/images/test/Mercedes.png' },
-    { name: '기아', img: '/images/test/tesla.png' },
-    { name: 'BMW', img: '/images/test/Alfa-Romeo.png' },
-    { name: '벤츠', img: '/images/test/Aston_Martin.png' },
-    { name: '현대', img: '/images/test/Jaguar.png' },
-    { name: '기아', img: '/images/test/Koenigsegg.png' },
-    { name: '기아', img: '/images/test/Lagonda.png' },
-    { name: '기아', img: '/images/test/Maybach.png' },
-    { name: '기아', img: '/images/test/Mercedes.png' },
-    { name: '기아', img: '/images/test/tesla.png' }
-   
-    
-  ],
-  bag: [
-    { name: '샤넬', img: '/images/test/Celine.png' },
-    { name: '루이비통', img: '/images/test/chanel.png' },
-    { name: '프라다', img: '/images/test/gucci.png' },
-    { name: '프라다', img: '/images/test/hermes.png' },
-    { name: '샤넬', img: '/images/test/louisvuitton.png' },
-    { name: '샤넬', img: '/images/test/ysl.png' },
-    { name: '샤넬', img: '/images/test/Celine.png' },
-    { name: '루이비통', img: '/images/test/chanel.png' },
-    { name: '프라다', img: '/images/test/gucci.png' },
-    { name: '프라다', img: '/images/test/hermes.png' },
-    { name: '샤넬', img: '/images/test/louisvuitton.png' },
-    { name: '샤넬', img: '/images/test/ysl.png' },
-    { name: '샤넬', img: '/images/test/Celine.png' },
-    { name: '루이비통', img: '/images/test/chanel.png' },
-    { name: '프라다', img: '/images/test/gucci.png' },
-    { name: '프라다', img: '/images/test/hermes.png' },
-    { name: '샤넬', img: '/images/test/louisvuitton.png' },
-    { name: '샤넬', img: '/images/test/ysl.png' }
-  
-  ]
-}; */
-
-/*const sampleProducts = [
-  { name: '샘플 상품 A', price: '270,000원~', img: '/images/testbag2.jfif' },
-  { name: '샘플 상품 B', price: '308,500원~', img: '/images/testbag3.jfif' },
-  { name: '샘플 상품 C', price: '160,600원~', img: '/images/testbag.jfif' },
-  { name: '샘플 상품 D', price: '160,600원~', img: '/images/testbag.jfif' },
-  { name: '샘플 상품 B', price: '308,500원~', img: '/images/testbag3.jfif' },
-  { name: '샘플 상품 C', price: '160,600원~', img: '/images/testbag.jfif' },
-  { name: '샘플 상품 D', price: '160,600원~', img: '/images/testbag.jfif' },
-  { name: '샘플 상품 B', price: '308,500원~', img: '/images/testbag3.jfif' },
-  { name: '샘플 상품 C', price: '160,600원~', img: '/images/testbag.jfif' },
-  { name: '샘플 상품 D', price: '160,600원~', img: '/images/testbag.jfif' },
-  { name: '샘플 상품 B', price: '308,500원~', img: '/images/testbag3.jfif' },
-  { name: '샘플 상품 C', price: '160,600원~', img: '/images/testbag.jfif' },
-  { name: '샘플 상품 D', price: '160,600원~', img: '/images/testbag.jfif' }
-];*/
-
 const container = document.getElementById("homeProductsData");
 const homeProducts  = JSON.parse(container.dataset.homeproducts);
 console.log(homeProducts);
@@ -468,6 +393,13 @@ loadProducts('recommendProducts', themeProducts);
 loadProducts('topLocalProducts', regionProducts);
 loadProducts('newProducts', recentProducts);
 //loadProducts('AllProducts', recentProducts);
+
+// 슬라이드 이미지 미리 로딩
+slides.forEach(s => {
+  const img = new Image();
+  img.src = s.img;
+});
+
 renderSlide(currentSlide);
 startSlider();
 window.scrollBrand = scrollBrand;
